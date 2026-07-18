@@ -50,6 +50,8 @@ const StocksMenuButton = GObject.registerClass({
 }, class StocksMenuButton extends PanelMenu.Button {
   _init ({ settings, extensionObject }) {
     this._previousPanelPosition = null
+    this._hidePanelId = null
+    this._menuOpenStateChangedId = null
     this._settingsChangedId = null
 
     this._settings = new SettingsHandler(settings)
@@ -82,11 +84,10 @@ const StocksMenuButton = GObject.registerClass({
     // Bind events
     // FIXME: figure out and fix why this triggers
     // Apr 21 14:31:45 station gnome-shell[2006]: Object .Gjs_ui_boxpointer_BoxPointer (0x55853c5181c0), has been already deallocated — impossible to get any property from it. This might be caused by the object having been destroyed from C code using something such as destroy(), dispose(), or remove() vfuncs.
-    this._mainEventHandler.connect('hide-panel', () => this.menu.close())
+    this._hidePanelId = this._mainEventHandler.connect('hide-panel', () => this.menu.close())
     this._settingsChangedId = this._settings.connect('changed', this._sync.bind(this))
 
-    this.menu.connect('destroy', this._destroyExtension.bind(this))
-    this.menu.connect('open-state-changed', (menu, isOpen) => {
+    this._menuOpenStateChangedId = this.menu.connect('open-state-changed', (menu, isOpen) => {
       this._mainEventHandler.emit('open-state-changed', { isOpen })
     })
 
@@ -127,10 +128,23 @@ const StocksMenuButton = GObject.registerClass({
     this._previousPanelPosition = this._settings.position_in_panel
   }
 
-  _destroyExtension () {
+  destroy () {
+    if (this._hidePanelId) {
+      this._mainEventHandler.disconnect(this._hidePanelId)
+      this._hidePanelId = null
+    }
+
+    if (this._menuOpenStateChangedId) {
+      this.menu.disconnect(this._menuOpenStateChangedId)
+      this._menuOpenStateChangedId = null
+    }
+
     if (this._settingsChangedId) {
       this._settings.disconnect(this._settingsChangedId)
+      this._settingsChangedId = null
     }
+
+    super.destroy()
   }
 })
 

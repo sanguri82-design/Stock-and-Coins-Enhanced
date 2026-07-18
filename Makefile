@@ -23,7 +23,6 @@ MEDIA_FILES := $(wildcard $(SRC_DIR)/media)
 JS_COMPONENTS := $(SRC_DIR)/components $(SRC_DIR)/helpers $(SRC_DIR)/services
 
 SCHEMA_FILES := $(wildcard $(SCHEMAS_DIR)/*.gschema.xml)
-COMPILED_SCHEMAS := $(SCHEMAS_DIR)/gschemas.compiled
 
 POT_FILE := $(PO_DIR)/$(UUID).pot
 PO_FILES := $(wildcard $(PO_DIR)/*.po)
@@ -31,7 +30,7 @@ MO_FILES := $(PO_FILES:$(PO_DIR)/%.po=$(LOCALE_DIR)/%/LC_MESSAGES/$(UUID).mo)
 MO_DIR := $(PO_FILES:$(PO_DIR)/%.po=$(LOCALE_DIR)/%/LC_MESSAGES)
 
 TOLOCALIZE := $(JS_FILES) $(SRC_DIR)/helpers/translations.js
-FILES := $(JS_FILES) $(JS_COMPONENTS) $(SCHEMAS_DIR) $(CSS_FILES) ${MEDIA_FILES} $(SRC_DIR)/metadata.json $(MO_FILES)
+FILES := $(JS_FILES) $(JS_COMPONENTS) $(SCHEMA_FILES) $(CSS_FILES) ${MEDIA_FILES} $(SRC_DIR)/metadata.json $(MO_FILES)
 LEGAL_FILES := LICENSE NOTICE README.md
 
 ifeq ($(strip $(DESTDIR)),)
@@ -47,9 +46,6 @@ default: build
 
 $(BUILD_DIR):
 	mkdir -p $@
-
-$(COMPILED_SCHEMAS): $(SCHEMA_FILES)
-	glib-compile-schemas $(SCHEMAS_DIR)
 
 $(LOCALE_DIR)/%/LC_MESSAGES:
 	mkdir -p $@
@@ -68,7 +64,9 @@ $(MO_FILES): $(PO_FILES) $(MO_DIR)
 $(LOCALE_DIR)/%/LC_MESSAGES/$(UUID).mo: $(PO_DIR)/%.po
 	msgfmt -c $< -o $@
 
-build: $(BUILD_DIR) $(COMPILED_SCHEMAS) $(MO_FILES)
+build: $(BUILD_DIR) $(MO_FILES)
+	rm -rf $(BUILD_DIR)/$(SRC_DIR)
+	mkdir -p $(BUILD_DIR)/$(SRC_DIR)
 	cp -r --parents $(FILES) $<
 	cp $(LEGAL_FILES) $(BUILD_DIR)/$(SRC_DIR)/
 
