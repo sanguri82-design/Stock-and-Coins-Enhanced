@@ -1,0 +1,300 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the gnome-shell-extension-stocks package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: gnome-shell-extension-stocks\n"
+"Report-Msgid-Bugs-To: fh@infinicode.de\n"
+"POT-Creation-Date: 2023-06-03 22:41+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: stocks@infinicode.de/extension.js:66
+msgid "Stocks"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:6
+msgid "Stocks Extension"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:7
+msgid "A extension to display stock quotes in GNOME Shell Panel"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:9
+msgid "back"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:10
+msgid "Filter Results"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:11
+msgid "Loading Data"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:12
+msgid "No Symbols / Tickers configured."
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:13
+msgid "stocks"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:14
+msgid "UNKNOWN"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:16
+msgid "Yahoo"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:17
+msgid "EastMoney"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:20
+msgid "Add Symbol"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:21
+msgid "Add Portfolio"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:22
+msgid "Portfolio Name"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:23
+#, javascript-format
+msgid "Changeme %d"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:24
+#, javascript-format
+msgid "List %d"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:25
+msgid "Name"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:26
+#: stocks@infinicode.de/helpers/translations.js:55
+msgid "Symbol"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:27
+msgid "In Ticker?"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:28
+msgid " - in Ticker"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:29
+msgid "Provider"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:30
+#, javascript-format
+msgid "Remove %s?"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:31
+msgid "General"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:32
+msgid "Settings"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:33
+msgid "About"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:34
+msgid "Symbols"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:35
+msgid "Symbol List"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:36
+msgid "Portfolios"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:37
+msgid "Portfolio List"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:38
+msgid "Position in Panel"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:39
+msgid "Left"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:40
+msgid "Center"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:41
+msgid "Right"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:43
+msgid "Ticker Display Variation"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:44
+msgid "Compact"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:45
+msgid "Regular"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:46
+msgid "Tremendous"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:47
+msgid "Minimal"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:49
+msgid "Items to show in ticker"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:50
+msgid "Stock Panel Ticker Interval in Seconds"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:51
+msgid "Show off-market prices in Ticker"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:52
+msgid "Use instrument names from provider"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:56
+msgid "Change"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:57
+#: stocks@infinicode.de/helpers/translations.js:69
+msgid "Pre Market*"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:58
+#: stocks@infinicode.de/helpers/translations.js:70
+msgid "Post Market*"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:59
+msgid "Volume"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:60
+msgid "Exchange"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:61
+msgid "Prev. Close"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:62
+msgid "Open"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:63
+msgid "Close"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:64
+msgid "High"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:65
+msgid "Low"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:66
+msgid "Time"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:67
+msgid "Before Hours*"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:68
+msgid "After Hours*"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:74
+msgid "1D"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:75
+msgid "5D"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:76
+msgid "1M"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:77
+msgid "6M"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:78
+msgid "YTD"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:79
+msgid "1Y"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:80
+msgid "5Y"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:81
+msgid "Max"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:85
+msgid "OS"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:86
+msgid "Extension Version"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:87
+msgid "Git Commit"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:88
+msgid "GNOME Version"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:89
+msgid "Session Type"
+msgstr ""
+
+#: stocks@infinicode.de/helpers/translations.js:92
+msgid "%H:%M:%S %d.%m.%Y"
+msgstr ""

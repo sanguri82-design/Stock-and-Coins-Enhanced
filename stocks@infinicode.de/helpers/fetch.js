@@ -1,0 +1,114 @@
+import Gio from 'gi://Gio'
+import Soup from 'gi://Soup'
+
+const DEFAULT_TIME_OUT_IN_SECONDS = 10
+const DEFAULT_CHROME_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
+
+
+const Response = class {
+  constructor (message, body) {
+    this.message = message
+    this.body = body
+
+    if (message) {
+      this.headers = message.response_headers
+      this.url = message.get_uri().to_string()
+      this.status = message.status_code
+      this.statusText = Soup.Status.get_phrase(this.status)
+
+      this.ok = (this.status === Soup.Status.OK)
+    }
+  }
+
+  headers () {
+    return this.headers
+  }
+
+  blob () {
+    return this.body
+  }
+
+  text () {
+    return this.body
+  }
+
+  json () {
+    try {
+      return JSON.parse(this.text())
+    } catch (e) {
+      return null
+    }
+  }
+}
+
+const appendHeaders = (message, headers) => {
+  const headerNames = Object.keys(headers)
+  headerNames.forEach(headerName => message.request_headers.append(headerName, headers[headerName]))
+}
+
+const appendCookies = (message, rawCookies) => {
+  const cookies = rawCookies.map(rawCookie => Soup.Cookie.parse(rawCookie, null))
+  Soup.cookies_to_request(cookies, message)
+}
+
+const generateQueryString = params => {
+  if (!params) {
+    return ''
+  }
+
+  // filter items without value & create pair list of paramName=paramValue
+  const paramKeyValues = Object.keys(params).filter(paramName => params[paramName]).map(paramName => {
+    let paramValue = params[paramName]
+
+    if (typeof paramValue === 'boolean') {
+      paramValue = paramValue ? 1 : 0
+    }
+
+    return `${paramName}=${paramValue}`
+  })
+
+  return `?${paramKeyValues.join('&')}`
+}
+
+export const fetch = ({ url, method = 'GET', headers, queryParameters, customHttpSession, cookies = null, cancellable = null }) => {
+  return new Promise((resolve, reject) => {
+    url = url + generateQueryString(queryParameters)
+
+    // console.log(`Fetching url: ${url}`)
+
+    const request_message = Soup.Message.new(method, url)
+
+    // Always force the User-Agent header
+    request_message.request_headers.append('User-Agent', DEFAULT_CHROME_USER_AGENT)
+
+    if (headers) {
+      appendHeaders(request_message, headers)
+    }
+
+    if (cookies) {
+      appendCookies(request_message, cookies)
+    }
+
+    const httpSession = customHttpSession || new Soup.Session({ timeout: DEFAULT_TIME_OUT_IN_SECONDS })
+
+    httpSession.send_and_read_async(request_message, null, cancellable, (source, response_message) => {
+      let body = ''
+
+      try {
+        const bytes = httpSession.send_and_read_finish(response_message)
+        const decoder = new TextDecoder()
+        body = decoder.decode(bytes.get_data())
+      } catch (e) {
+        if (e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED)) {
+          reject(e)
+          return
+        }
+        console.error(`Could not parse soup response body ${e}`)
+      }
+
+      const response = new Response(request_message, body)
+
+      resolve(response)
+    })
+  })
+}
