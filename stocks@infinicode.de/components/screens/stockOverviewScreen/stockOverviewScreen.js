@@ -155,11 +155,11 @@ export const StockOverviewScreen = GObject.registerClass({
         settings: this._settings
       }),
 
-      symbols.filter(item => item.provider !== FINANCE_PROVIDER.YAHOO).map(symbolData => FinanceService.getQuoteSummary({
+      Promise.all(symbols.filter(item => item.provider !== FINANCE_PROVIDER.YAHOO).map(symbolData => FinanceService.getQuoteSummary({
         ...symbolData,
         fallbackName: symbolData.name,
         settings: this._settings
-      }))
+      })))
     ])
 
     this._showLoadingInfoTimeoutId = clearTimeout(this._showLoadingInfoTimeoutId)

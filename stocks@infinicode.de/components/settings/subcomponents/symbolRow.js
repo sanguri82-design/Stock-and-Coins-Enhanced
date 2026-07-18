@@ -5,8 +5,17 @@ import GLib from 'gi://GLib'
 import Gtk from 'gi://Gtk'
 import Pango from 'gi://Pango'
 
-import { FINANCE_PROVIDER } from '../../../services/meta/generic.js'
+import { ASSET_TYPE, PROVIDERS_BY_ASSET_TYPE } from '../../../services/meta/generic.js'
 import { Translations } from '../../../helpers/translations.js'
+
+const PROVIDER_TRANSLATION_KEYS = {
+  yahoo: 'YAHOO',
+  eastmoney: 'EAST_MONEY',
+  binance: 'BINANCE',
+  coingecko: 'COINGECKO',
+  coinbase: 'COINBASE',
+  upbit: 'UPBIT'
+}
 
 export const SymbolRow = GObject.registerClass({
   GTypeName: 'StockExtension-SymbolRow',
@@ -83,7 +92,10 @@ export const SymbolRow = GObject.registerClass({
       max_width_chars: 25,
       ellipsize: Pango.EllipsizeMode.END,
     })
-    label.label = `${this.item.name} (${this.item.symbol}@${this.item.provider}${this.item.showInTicker ? Translations.SETTINGS.SHOW_IN_TICKER_INFO : ''})`
+    const assetTypeLabel = this.item.assetType === ASSET_TYPE.COIN
+      ? Translations.SETTINGS.ASSET_TYPE_COIN
+      : Translations.SETTINGS.ASSET_TYPE_STOCK
+    label.label = `${this.item.name} [${assetTypeLabel}] (${this.item.symbol}@${this.item.provider}${this.item.showInTicker ? Translations.SETTINGS.SHOW_IN_TICKER_INFO : ''})`
     viewRowBox.append(label)
 
     const removeButton = new Gtk.Button({
@@ -115,7 +127,8 @@ export const SymbolRow = GObject.registerClass({
     editRowBox.initForm = item => {
       editRowBox._nameEntry.text = item.name || ''
       editRowBox._symbolEntry.text = item.symbol || ''
-      editRowBox._providerDropDown.selected = Object.values(FINANCE_PROVIDER).indexOf(item.provider) || 0
+      editRowBox._assetTypeDropDown.selected = item.assetType === ASSET_TYPE.COIN ? 1 : 0
+      editRowBox._updateProviderList(item.provider)
       editRowBox._showInTickerCheckButton.active = Boolean(item.showInTicker)
     }
 
@@ -129,13 +142,30 @@ export const SymbolRow = GObject.registerClass({
       placeholder_text: Translations.SETTINGS.SYMBOL
     })
 
-    const providerList = new Gtk.StringList()
-    providerList.append(Translations.PROVIDERS.YAHOO)
-    providerList.append(Translations.PROVIDERS.EAST_MONEY)
+    const assetTypeList = new Gtk.StringList()
+    assetTypeList.append(Translations.SETTINGS.ASSET_TYPE_STOCK)
+    assetTypeList.append(Translations.SETTINGS.ASSET_TYPE_COIN)
+
+    editRowBox._assetTypeDropDown = new Gtk.DropDown({
+      model: assetTypeList,
+      tooltip_text: Translations.SETTINGS.ASSET_TYPE
+    })
 
     editRowBox._providerDropDown = new Gtk.DropDown({
-      model: providerList
+      tooltip_text: Translations.SETTINGS.PROVIDER
     })
+
+    editRowBox._updateProviderList = selectedProvider => {
+      const assetType = editRowBox._assetTypeDropDown.selected === 1 ? ASSET_TYPE.COIN : ASSET_TYPE.STOCK
+      const providers = PROVIDERS_BY_ASSET_TYPE[assetType]
+      const providerList = new Gtk.StringList()
+
+      providers.forEach(provider => providerList.append(Translations.PROVIDERS[PROVIDER_TRANSLATION_KEYS[provider]]))
+      editRowBox._providerDropDown.model = providerList
+      editRowBox._providerDropDown.selected = Math.max(0, providers.indexOf(selectedProvider))
+    }
+
+    editRowBox._assetTypeDropDown.connect('notify::selected', () => editRowBox._updateProviderList())
 
     editRowBox._showInTickerCheckButton = new Gtk.CheckButton({
       label: Translations.SETTINGS.SHOW_IN_TICKER_LABEL
@@ -151,16 +181,18 @@ export const SymbolRow = GObject.registerClass({
         this.item.id,
         editRowBox._nameEntry.text,
         editRowBox._symbolEntry.text,
+        editRowBox._assetTypeDropDown.selected === 1 ? ASSET_TYPE.COIN : ASSET_TYPE.STOCK,
         editRowBox._showInTickerCheckButton.active,
-        Object.values(FINANCE_PROVIDER)[editRowBox._providerDropDown.selected]
+        PROVIDERS_BY_ASSET_TYPE[editRowBox._assetTypeDropDown.selected === 1 ? ASSET_TYPE.COIN : ASSET_TYPE.STOCK][editRowBox._providerDropDown.selected]
       ]
 
-      this.activate_action('symbol.edit', new GLib.Variant('(sssbs)', data))
+      this.activate_action('symbol.edit', new GLib.Variant('(ssssbs)', data))
       this._stopEdit()
     })
 
     editRowBox.append(editRowBox._nameEntry)
     editRowBox.append(editRowBox._symbolEntry)
+    editRowBox.append(editRowBox._assetTypeDropDown)
     editRowBox.append(editRowBox._providerDropDown)
     editRowBox.append(editRowBox._showInTickerCheckButton)
     editRowBox.append(saveButton)

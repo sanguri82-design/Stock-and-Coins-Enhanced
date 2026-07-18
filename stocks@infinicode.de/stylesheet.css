@@ -71,6 +71,16 @@
     margin-right: 6px;
 }
 
+/* Follow the panel theme so neutral quotes stay visible in both light and dark panels. */
+.stocks-extension .menu-stock-ticker .quote-neutral {
+    color: inherit;
+}
+
+.stocks-extension .menu-stock-ticker .ticker-stock-name-label {
+    color: #4ade80;
+    font-weight: bold;
+}
+
 
 .stocks-extension .menu-stock-ticker .stock-info-box.compact .ticker-stock-name-label,
 .stocks-extension .menu-stock-ticker .stock-info-box.regular .ticker-stock-name-label {

@@ -6,6 +6,7 @@ export const StockItem = GObject.registerClass({
     'id': GObject.ParamSpec.string('id', 'id', 'id', GObject.ParamFlags.READWRITE, null),
     'name': GObject.ParamSpec.string('name', 'name', 'name', GObject.ParamFlags.READWRITE, null),
     'symbol': GObject.ParamSpec.string('symbol', 'symbol', 'symbol', GObject.ParamFlags.READWRITE, 'AHLA.DE'),
+    'assetType': GObject.ParamSpec.string('assetType', 'assetType', 'assetType', GObject.ParamFlags.READWRITE, 'stock'),
     'provider': GObject.ParamSpec.string('provider', 'provider', 'provider', GObject.ParamFlags.READWRITE, 'yahoo'),
     'showInTicker': GObject.ParamSpec.boolean('showInTicker', 'showInTicker', 'showInTicker', GObject.ParamFlags.READWRITE, false),
   },
@@ -13,6 +14,7 @@ export const StockItem = GObject.registerClass({
   id = null
   name = null
   symbol = null
+  assetType = null
   provider = null
   showInTicker = false
 })

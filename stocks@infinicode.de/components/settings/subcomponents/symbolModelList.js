@@ -7,7 +7,7 @@ import { StockItem } from './stockItem.js'
 import { SettingsHandler, STOCKS_SYMBOL_PAIRS, } from '../../../helpers/settings.js'
 import { Translations } from '../../../helpers/translations.js'
 
-import { FINANCE_PROVIDER } from '../../../services/meta/generic.js'
+import { ASSET_TYPE, FINANCE_PROVIDER } from '../../../services/meta/generic.js'
 
 const SETTING_KEYS_TO_REFRESH = [
   STOCKS_SYMBOL_PAIRS
@@ -49,6 +49,7 @@ export const SymbolModelList = GObject.registerClass({
       stockItem.id = item.id || Gio.dbus_generate_guid()
       stockItem.name = item.name
       stockItem.symbol = item.symbol
+      stockItem.assetType = item.assetType || ASSET_TYPE.STOCK
       stockItem.provider = item.provider
       stockItem.showInTicker = item.showInTicker
 
@@ -64,6 +65,7 @@ export const SymbolModelList = GObject.registerClass({
     newStockItem.id = Gio.dbus_generate_guid()
     newStockItem.name = name
     newStockItem.symbol = 'AHLA.DE'
+    newStockItem.assetType = ASSET_TYPE.STOCK
     newStockItem.provider = FINANCE_PROVIDER.YAHOO
     newStockItem.showInTicker = false
 
@@ -92,7 +94,7 @@ export const SymbolModelList = GObject.registerClass({
     this.save_items()
   }
 
-  edit (id, name, symbol, showInTicker, provider) {
+  edit (id, name, symbol, assetType, showInTicker, provider) {
     const pos = this.#items.findIndex(item => item.id === id)
 
     if (pos === -1) {
@@ -104,6 +106,7 @@ export const SymbolModelList = GObject.registerClass({
 
     modifiedItem.name = name
     modifiedItem.symbol = symbol
+    modifiedItem.assetType = assetType
     modifiedItem.showInTicker = showInTicker
     modifiedItem.provider = provider
 

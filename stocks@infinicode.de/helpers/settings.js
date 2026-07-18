@@ -1,6 +1,6 @@
 import GLib from 'gi://GLib'
 
-import { FINANCE_PROVIDER } from '../services/meta/generic.js'
+import { ASSET_TYPE, COIN_PROVIDERS, FINANCE_PROVIDER } from '../services/meta/generic.js'
 
 import { decodeBase64JsonOrDefault, isNullOrEmpty, isNullOrUndefined } from './data.js'
 
@@ -22,6 +22,7 @@ export const DEFAULT_SYMBOL_DATA = [
     symbol: 'BABA',
     name: 'Alibaba (NY)',
     showInTicker: true,
+    assetType: ASSET_TYPE.STOCK,
     provider: FINANCE_PROVIDER.YAHOO
   }
 ]
@@ -30,16 +31,22 @@ export const DEFAULT_PORTFOLIO_DATA = [
   {
     id: 'e3e619c6c567328e22f79bfd647b3003',
     name: 'List 1',
-    symbols: [
-      DEFAULT_SYMBOL_DATA
-    ]
+    symbols: DEFAULT_SYMBOL_DATA
   }
 ]
+
+const PORTFOLIO_NAME_MIGRATIONS = {
+  '주요주식': 'Stocks',
+  '주요 주식': 'Stocks',
+  '주요코인': 'Coins',
+  '주요 코인': 'Coins'
+}
 
 export const convertOldSettingsFormat = rawString => rawString.split('-&&-').map(symbolPairString => ({
   name: symbolPairString.split('-§§-')[0],
   symbol: symbolPairString.split('-§§-')[1],
   showInTicker: true,
+  assetType: ASSET_TYPE.STOCK,
   provider: FINANCE_PROVIDER.YAHOO
 }))
 
@@ -221,7 +228,24 @@ export const SettingsHandler = class SettingsHandler {
       return migrated
     }
 
-    return decodeBase64JsonOrDefault(rawString, DEFAULT_PORTFOLIO_DATA)
+    const portfolios = decodeBase64JsonOrDefault(rawString, DEFAULT_PORTFOLIO_DATA)
+    let needsMigration = false
+    const migratedPortfolios = portfolios.map(portfolio => {
+      const migratedName = PORTFOLIO_NAME_MIGRATIONS[portfolio.name] || portfolio.name
+      needsMigration ||= migratedName !== portfolio.name
+
+      return {
+        ...portfolio,
+        name: migratedName,
+        symbols: this._ensureHealthyStockItemStructure(portfolio.symbols || [])
+      }
+    })
+
+    if (needsMigration) {
+      this._settings.set_string(STOCKS_PORTFOLIOS, GLib.base64_encode(JSON.stringify(migratedPortfolios)))
+    }
+
+    return migratedPortfolios
   }
 
   _migrateStockItemsFromV1Structure (rawString) {
@@ -251,7 +275,9 @@ export const SettingsHandler = class SettingsHandler {
       name: item.name || '',
       symbol: item.symbol || '',
       showInTicker: isNullOrUndefined(item.showInTicker) ? true : item.showInTicker,
-      provider: item.provider || FINANCE_PROVIDER.YAHOO
+      assetType: item.assetType || (COIN_PROVIDERS.includes(item.provider) ? ASSET_TYPE.COIN : ASSET_TYPE.STOCK),
+      provider: item.provider || FINANCE_PROVIDER.YAHOO,
+      ...(item.id ? { id: item.id } : {})
     }))
   }
 }

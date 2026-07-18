@@ -57,7 +57,29 @@ export const CHART_RANGES_MAX_GAP = {
 
 export const FINANCE_PROVIDER = {
   YAHOO: 'yahoo',
-  EAST_MONEY: 'eastmoney'
+  EAST_MONEY: 'eastmoney',
+  BINANCE: 'binance',
+  COINGECKO: 'coingecko',
+  COINBASE: 'coinbase',
+  UPBIT: 'upbit'
+}
+
+export const ASSET_TYPE = {
+  STOCK: 'stock',
+  COIN: 'coin'
+}
+
+export const STOCK_PROVIDERS = [FINANCE_PROVIDER.YAHOO, FINANCE_PROVIDER.EAST_MONEY]
+export const COIN_PROVIDERS = [
+  FINANCE_PROVIDER.BINANCE,
+  FINANCE_PROVIDER.COINGECKO,
+  FINANCE_PROVIDER.COINBASE,
+  FINANCE_PROVIDER.UPBIT
+]
+
+export const PROVIDERS_BY_ASSET_TYPE = {
+  [ASSET_TYPE.STOCK]: STOCK_PROVIDERS,
+  [ASSET_TYPE.COIN]: COIN_PROVIDERS
 }
 
 export const MARKET_STATES = {

@@ -1,5 +1,6 @@
 import Gio from 'gi://Gio'
 
+import { Translations } from '../helpers/translations.js'
 import { TRANSACTION_TYPES } from './meta/generic.js'
 
 export const loadCalculatedTransactionsForSymbol = ({ portfolioId, quoteSummary, settings }) => {
@@ -97,7 +98,7 @@ export const save = ({ portfolioId, symbol, transaction, settings }) => {
   const updatedItem = {
     ...transaction,
     price: parseFloat(transaction.price),
-    amount: parseInt(transaction.amount),
+    amount: parseFloat(transaction.amount),
   }
 
   if (transaction.id) {
@@ -128,7 +129,7 @@ export const remove = ({ portfolioId, symbol, transaction, settings }) => {
 }
 
 export const validate = (transaction) => {
-  if (isNaN(parseInt(transaction.amount))) {
+  if (!Number.isFinite(parseFloat(transaction.amount)) || parseFloat(transaction.amount) <= 0) {
     return Translations.TRANSACTIONS.INVALID_AMOUNT
   }
 

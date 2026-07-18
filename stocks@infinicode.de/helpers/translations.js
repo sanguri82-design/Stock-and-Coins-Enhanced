@@ -14,11 +14,15 @@ export const initTranslations = (_) => {
     UNKNOWN: _('UNKNOWN'),
     PROVIDERS: {
       YAHOO: _('Yahoo'),
-      EAST_MONEY: _('EastMoney')
+      EAST_MONEY: _('EastMoney'),
+      BINANCE: _('Binance'),
+      COINGECKO: _('CoinGecko'),
+      COINBASE: _('Coinbase'),
+      UPBIT: _('Upbit')
     },
     TRANSACTIONS: {
       INVALID_PRICE: _('Price could not be parsed'),
-      INVALID_AMOUNT: _('Amount must be a whole number'),
+      INVALID_AMOUNT: _('Amount must be a positive number'),
       INVALID_DATE: _('Date could not be parsed'),
       TITLE_TRANSACTION_TYPE: _('Transaction Type'),
       NO_TRANSACTIONS_ERROR: _('No transactions, use the + Icon in the Search Bar to add transactions.'),
@@ -32,6 +36,9 @@ export const initTranslations = (_) => {
       DEFAULT_PORTFOLIO_NAME: _('List %d'),
       QUOTE_NAME: _('Name'),
       SYMBOL: _('Symbol'),
+      ASSET_TYPE: _('Asset Type'),
+      ASSET_TYPE_STOCK: _('Stock'),
+      ASSET_TYPE_COIN: _('Coin'),
       SHOW_IN_TICKER_LABEL: _('In Ticker?'),
       SHOW_IN_TICKER_INFO: _(' - in Ticker'),
       PROVIDER: _('Provider'),

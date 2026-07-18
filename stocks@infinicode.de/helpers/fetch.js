@@ -64,7 +64,7 @@ const generateQueryString = params => {
       paramValue = paramValue ? 1 : 0
     }
 
-    return `${paramName}=${paramValue}`
+    return `${encodeURIComponent(paramName)}=${encodeURIComponent(paramValue)}`
   })
 
   return `?${paramKeyValues.join('&')}`

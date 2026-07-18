@@ -5,10 +5,15 @@ import { QuoteSummary } from './dto/quoteSummary.js'
 
 import * as yahooService from '../services/yahooService.js'
 import * as eastMoneyService from '../services/eastMoneyService.js'
+import * as cryptoService from '../services/cryptoService.js'
 
 const services = {
   [FINANCE_PROVIDER.YAHOO]: yahooService,
-  [FINANCE_PROVIDER.EAST_MONEY]: eastMoneyService
+  [FINANCE_PROVIDER.EAST_MONEY]: eastMoneyService,
+  [FINANCE_PROVIDER.BINANCE]: cryptoService,
+  [FINANCE_PROVIDER.COINGECKO]: cryptoService,
+  [FINANCE_PROVIDER.COINBASE]: cryptoService,
+  [FINANCE_PROVIDER.UPBIT]: cryptoService
 }
 
 export const getQuoteSummaryList = async ({ symbolsWithFallbackName, provider, settings = null, cancellable = null }) => {
@@ -28,7 +33,7 @@ export const getQuoteSummaryList = async ({ symbolsWithFallbackName, provider, s
     }))
 
     if (symbolsWithFallbackName?.length > 0) {
-      resultList = await service.getQuoteList({ symbolsWithFallbackName, settings, cancellable })
+      resultList = await service.getQuoteList({ symbolsWithFallbackName, provider, settings, cancellable })
     }
 
     return resultList
@@ -46,7 +51,7 @@ export const getQuoteSummary = async ({ symbol, provider, fallbackName, settings
     let summary = {}
 
     if (symbol) {
-      summary = await service.getQuoteSummary({ symbol, settings, cancellable })
+      summary = await service.getQuoteSummary({ symbol, provider, fallbackName, settings, cancellable })
     }
 
     if (!summary.Symbol) {
@@ -66,7 +71,7 @@ export const getHistoricalQuotes = async ({ symbol, provider, range = '1y', inte
     const service = services[provider]
 
     if (symbol && service) {
-      return service.getHistoricalQuotes({ symbol, range, interval, includeTimestamps, settings, cancellable })
+      return service.getHistoricalQuotes({ symbol, provider, range, interval, includeTimestamps, settings, cancellable })
     }
   })
 }
@@ -76,7 +81,7 @@ export const getNewsList = async ({ symbol, provider, settings = null, cancellab
     const service = services[provider]
 
     if (symbol && service) {
-      return service.getNewsList({ symbol, settings, cancellable })
+      return service.getNewsList({ symbol, provider, settings, cancellable })
     }
   }, 15 * 60 * 1000)
 }
