@@ -3,7 +3,7 @@ import GObject from 'gi://GObject'
 import St from 'gi://St'
 
 import { IconButton } from '../buttons/iconButton.js'
-import { roundOrDefault, getStockColorStyleClass } from '../../helpers/data.js'
+import { formatCurrency, formatNumber, getStockColorStyleClass } from '../../helpers/data.js'
 import { Translations } from '../../helpers/translations.js'
 import { TRANSACTION_TYPES } from '../../services/meta/generic.js'
 
@@ -71,7 +71,7 @@ export const TransactionCard = GObject.registerClass({
 
     const quoteLabel = new St.Label({
       style_class: 'stock-full-name',
-      text: `${this.cardItem.amount} @ ${this.cardItem.price} (${this.cardItem.type} | ${this.cardItem.date})`
+      text: `${formatNumber(this.cardItem.amount, '--', 0)} @ ${formatCurrency(this.cardItem.price, this._currencyCode())} (${this.cardItem.type} | ${this.cardItem.date})`
     })
 
     stockInformationBox.add_child(quoteLabel)
@@ -142,17 +142,17 @@ export const TransactionCard = GObject.registerClass({
 
     leftDetailBox.add_child(this._createDetailItem(
         this._createDetailItemLabel(Translations.MISC.TODAY),
-        this._createDetailItemValueForChange(transaction.today, quoteSummary.CurrencySymbol, transaction.todayPercent)
+        this._createDetailItemValueForChange(transaction.today, this._currencyCode(), transaction.todayPercent)
     ))
 
     leftDetailBox.add_child(this._createDetailItem(
         this._createDetailItemLabel(Translations.STOCKS.VALUE),
-        this._createDetailItemValue(`${roundOrDefault(transaction.value, '--')} ${quoteSummary.CurrencySymbol}`)
+        this._createDetailItemValue(formatCurrency(transaction.value, this._currencyCode()))
     ))
 
     leftDetailBox.add_child(this._createDetailItem(
         this._createDetailItemLabel(Translations.STOCKS.REALIZED),
-        this._createDetailItemValueForChange(transaction.realized, quoteSummary.CurrencySymbol, transaction.realizedPercent)
+        this._createDetailItemValueForChange(transaction.realized, this._currencyCode(), transaction.realizedPercent)
     ))
 
     return leftDetailBox
@@ -168,12 +168,12 @@ export const TransactionCard = GObject.registerClass({
 
     rightDetailBox.add_child(this._createDetailItem(
         this._createDetailItemLabel(Translations.MISC.TOTAL),
-        this._createDetailItemValueForChange(transaction.total, quoteSummary.CurrencySymbol, transaction.totalPercent)
+        this._createDetailItemValueForChange(transaction.total, this._currencyCode(), transaction.totalPercent)
     ))
 
     rightDetailBox.add_child(this._createDetailItem(
         this._createDetailItemLabel(Translations.STOCKS.COST),
-        this._createDetailItemValue(`${roundOrDefault(transaction.cost, '--')} ${quoteSummary.CurrencySymbol}`)
+        this._createDetailItemValue(formatCurrency(transaction.cost, this._currencyCode()))
     ))
 
     return rightDetailBox
@@ -226,12 +226,12 @@ export const TransactionCard = GObject.registerClass({
 
     const quoteColorStyleClass = getStockColorStyleClass(change)
 
-    const changeLabel = new St.Label({ style_class: `detail-item-value change tar ${quoteColorStyleClass}`, text: `${roundOrDefault(change)}${currency ? ` ${currency}` : ''}` })
+    const changeLabel = new St.Label({ style_class: `detail-item-value change tar ${quoteColorStyleClass}`, text: formatCurrency(change, currency) })
     detailItem.add_child(changeLabel)
 
     detailItem.add_child(new St.Label({ style_class: 'detail-item-value tar', text: ' / ' }))
 
-    const changePercentLabel = new St.Label({ style_class: `detail-item-value change tar ${quoteColorStyleClass}`, text: `${roundOrDefault(changePercent)} %` })
+    const changePercentLabel = new St.Label({ style_class: `detail-item-value change tar ${quoteColorStyleClass}`, text: `${formatNumber(changePercent)} %` })
     detailItem.add_child(changePercentLabel)
 
     return detailItem
@@ -253,6 +253,10 @@ export const TransactionCard = GObject.registerClass({
   }
 
   _sync () {
+  }
+
+  _currencyCode () {
+    return this._quoteSummary.CurrencyCode || this._quoteSummary.CurrencySymbol
   }
 
   _onDestroy () {

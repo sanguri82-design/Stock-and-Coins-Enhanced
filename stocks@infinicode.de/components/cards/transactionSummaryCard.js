@@ -2,7 +2,7 @@ import Clutter from 'gi://Clutter'
 import GObject from 'gi://GObject'
 import St from 'gi://St'
 
-import { roundOrDefault, getStockColorStyleClass } from '../../helpers/data.js'
+import { formatCurrency, formatNumber, getStockColorStyleClass } from '../../helpers/data.js'
 import { Translations } from '../../helpers/translations.js'
 
 
@@ -93,17 +93,17 @@ export const TransactionSummaryCard = GObject.registerClass({
 
     const regularQuoteLabel = new St.Label({
       style_class: `quote-label ${quoteColorStyleClass}`,
-      text: `${roundOrDefault(this.cardItem.Close)}${this.cardItem.CurrencySymbol ? ` ${this.cardItem.CurrencySymbol}` : ''}`
+      text: formatCurrency(this.cardItem.Close, this._currencyCode())
     })
 
     const quoteChangeLabel = new St.Label({
       style_class: `fwb ${quoteColorStyleClass}`,
-      text: `${roundOrDefault(this.cardItem.Change)}${this.cardItem.CurrencySymbol ? ` ${this.cardItem.CurrencySymbol}` : ''}`
+      text: formatCurrency(this.cardItem.Change, this._currencyCode())
     })
 
     const quoteChangePercentLabel = new St.Label({
       style_class: `fwb ${quoteColorStyleClass}`,
-      text: `${roundOrDefault(this.cardItem.ChangePercent)} %`
+      text: `${formatNumber(this.cardItem.ChangePercent)} %`
     })
 
     const openBracket = new St.Label({
@@ -154,17 +154,17 @@ export const TransactionSummaryCard = GObject.registerClass({
 
     leftDetailBox.add_child(this._createDetailItem(
         this._createDetailItemLabel(Translations.MISC.TODAY),
-        this._createDetailItemValueForChange(transactionResult.today, quoteSummary.CurrencySymbol, transactionResult.todayPercent)
+        this._createDetailItemValueForChange(transactionResult.today, this._currencyCode(), transactionResult.todayPercent)
     ))
 
     leftDetailBox.add_child(this._createDetailItem(
         this._createDetailItemLabel(Translations.STOCKS.VALUE),
-        this._createDetailItemValue(`${roundOrDefault(transactionResult.value, '--')} ${quoteSummary.CurrencySymbol}`)
+        this._createDetailItemValue(formatCurrency(transactionResult.value, this._currencyCode()))
     ))
 
     leftDetailBox.add_child(this._createDetailItem(
         this._createDetailItemLabel(Translations.MISC.ALLTIME),
-        this._createDetailItemValueForChange(transactionResult.alltime, quoteSummary.CurrencySymbol, transactionResult.alltimePercent)
+        this._createDetailItemValueForChange(transactionResult.alltime, this._currencyCode(), transactionResult.alltimePercent)
     ))
 
     return leftDetailBox
@@ -180,17 +180,17 @@ export const TransactionSummaryCard = GObject.registerClass({
 
     rightDetailBox.add_child(this._createDetailItem(
         this._createDetailItemLabel(Translations.MISC.TOTAL),
-        this._createDetailItemValueForChange(transactionResult.total, quoteSummary.CurrencySymbol, transactionResult.totalPercent)
+        this._createDetailItemValueForChange(transactionResult.total, this._currencyCode(), transactionResult.totalPercent)
     ))
 
     rightDetailBox.add_child(this._createDetailItem(
         this._createDetailItemLabel(Translations.STOCKS.COST),
-        this._createDetailItemValue(`${roundOrDefault(transactionResult.unrealizedCost, '--')} ${quoteSummary.CurrencySymbol}`)
+        this._createDetailItemValue(formatCurrency(transactionResult.unrealizedCost, this._currencyCode()))
     ))
 
     rightDetailBox.add_child(this._createDetailItem(
         this._createDetailItemLabel(Translations.STOCKS.REALIZED),
-        this._createDetailItemValueForChange(transactionResult.realized, quoteSummary.CurrencySymbol, transactionResult.realizedPercent)
+        this._createDetailItemValueForChange(transactionResult.realized, this._currencyCode(), transactionResult.realizedPercent)
     ))
 
     return rightDetailBox
@@ -243,18 +243,22 @@ export const TransactionSummaryCard = GObject.registerClass({
 
     const quoteColorStyleClass = getStockColorStyleClass(change)
 
-    const changeLabel = new St.Label({ style_class: `detail-item-value change tar ${quoteColorStyleClass}`, text: `${roundOrDefault(change)}${currency ? ` ${currency}` : ''}` })
+    const changeLabel = new St.Label({ style_class: `detail-item-value change tar ${quoteColorStyleClass}`, text: formatCurrency(change, currency) })
     detailItem.add_child(changeLabel)
 
     detailItem.add_child(new St.Label({ style_class: 'detail-item-value tar', text: ' / ' }))
 
-    const changePercentLabel = new St.Label({ style_class: `detail-item-value change tar ${quoteColorStyleClass}`, text: `${roundOrDefault(changePercent)} %` })
+    const changePercentLabel = new St.Label({ style_class: `detail-item-value change tar ${quoteColorStyleClass}`, text: `${formatNumber(changePercent)} %` })
     detailItem.add_child(changePercentLabel)
 
     return detailItem
   }
 
   _sync () {
+  }
+
+  _currencyCode () {
+    return this.cardItem.CurrencyCode || this.cardItem.CurrencySymbol
   }
 
   _onDestroy () {

@@ -3,7 +3,7 @@ import GObject from 'gi://GObject'
 import St from 'gi://St'
 import Pango from 'gi://Pango'
 
-import { isNullOrEmpty, fallbackIfNaN, roundOrDefault, getStockColorStyleClass, toLocalDateFormat } from '../../helpers/data.js'
+import { isNullOrEmpty, fallbackIfNaN, formatCurrency, formatNumber, getStockColorStyleClass, toLocalDateFormat } from '../../helpers/data.js'
 import { Translations } from '../../helpers/translations.js'
 import { MARKET_STATES } from '../../services/meta/generic.js'
 import * as TransactionService from '../../services/transactionService.js'
@@ -100,7 +100,7 @@ export const StockCard = GObject.registerClass({
 
     const regularQuoteLabel = new St.Label({
       style_class: `quote-label ${quoteColorStyleClass}`,
-      text: `${roundOrDefault(this.cardItem.Close)}${this.cardItem.CurrencySymbol ? ` ${this.cardItem.CurrencySymbol}` : ''}`
+      text: formatCurrency(this.cardItem.Close, this._currencyCode())
     })
 
     quoteInformationPriceBox.add_child(regularQuoteLabel)
@@ -110,7 +110,7 @@ export const StockCard = GObject.registerClass({
 
       const preMarketQuoteLabel = new St.Label({
         style_class: `quote-label pre-market ${preMarketQuoteColorStyleClass}`,
-        text: `${roundOrDefault(this.cardItem.PreMarketPrice)}${this.cardItem.CurrencySymbol ? ` ${this.cardItem.CurrencySymbol}` : ''}*`
+        text: `${formatCurrency(this.cardItem.PreMarketPrice, this._currencyCode())}*`
       })
 
       quoteInformationPriceBox.add_child(new St.Label({ style_class: 'quote-separation tar', text: ' / ' }))
@@ -122,7 +122,7 @@ export const StockCard = GObject.registerClass({
 
       const postMarketQuoteLabel = new St.Label({
         style_class: `quote-label post-market ${postMarketQuoteColorStyleClass}`,
-        text: `${roundOrDefault(this.cardItem.PostMarketPrice)}${this.cardItem.CurrencySymbol ? ` ${this.cardItem.CurrencySymbol}` : ''}*`
+        text: `${formatCurrency(this.cardItem.PostMarketPrice, this._currencyCode())}*`
       })
 
       quoteInformationPriceBox.add_child(new St.Label({ style_class: 'quote-separation tar', text: ' / ' }))
@@ -155,12 +155,12 @@ export const StockCard = GObject.registerClass({
 
     const quoteChangeLabel = new St.Label({
       style_class: `small-text fwb ${quoteColorStyleClass}`,
-      text: `${roundOrDefault(this.cardItem.Change)}${this.cardItem.CurrencySymbol ? ` ${this.cardItem.CurrencySymbol}` : ''}`
+      text: formatCurrency(this.cardItem.Change, this._currencyCode())
     })
 
     const quoteChangePercentLabel = new St.Label({
       style_class: `small-text fwb ${quoteColorStyleClass}`,
-      text: `${roundOrDefault(this.cardItem.ChangePercent)} %`
+      text: `${formatNumber(this.cardItem.ChangePercent)} %`
     })
 
     const placeHolder = new St.Label({
@@ -193,12 +193,12 @@ export const StockCard = GObject.registerClass({
 
     const quoteChangeLabel = new St.Label({
       style_class: `small-text fwb ${quoteColorStyleClass}`,
-      text: `${roundOrDefault(this.cardItem.PreMarketChange)}${this.cardItem.CurrencySymbol ? ` ${this.cardItem.CurrencySymbol}` : ''}`
+      text: formatCurrency(this.cardItem.PreMarketChange, this._currencyCode())
     })
 
     const quoteChangePercentLabel = new St.Label({
       style_class: `small-text fwb ${quoteColorStyleClass}`,
-      text: `${roundOrDefault(this.cardItem.PreMarketChangePercent)} %`
+      text: `${formatNumber(this.cardItem.PreMarketChangePercent)} %`
     })
 
     const placeHolder = new St.Label({
@@ -231,12 +231,12 @@ export const StockCard = GObject.registerClass({
 
     const quoteChangeLabel = new St.Label({
       style_class: `small-text fwb ${quoteColorStyleClass}`,
-      text: `${roundOrDefault(this.cardItem.PostMarketChange)}${this.cardItem.CurrencySymbol ? ` ${this.cardItem.CurrencySymbol}` : ''}`
+      text: formatCurrency(this.cardItem.PostMarketChange, this._currencyCode())
     })
 
     const quoteChangePercentLabel = new St.Label({
       style_class: `small-text fwb ${quoteColorStyleClass}`,
-      text: `${roundOrDefault(this.cardItem.PostMarketChangePercent)} %`
+      text: `${formatNumber(this.cardItem.PostMarketChangePercent)} %`
     })
 
     const placeHolder = new St.Label({
@@ -282,7 +282,7 @@ export const StockCard = GObject.registerClass({
 
     leftDetailBox.add_child(this._createDetailItem(
         this._createDetailItemLabel(Translations.MISC.TODAY),
-        this._createDetailItemValueForChange(transactionResult.today, quoteSummary.CurrencySymbol, transactionResult.todayPercent)
+        this._createDetailItemValueForChange(transactionResult.today, quoteSummary.CurrencyCode || quoteSummary.CurrencySymbol, transactionResult.todayPercent)
     ))
 
     return leftDetailBox
@@ -298,7 +298,7 @@ export const StockCard = GObject.registerClass({
 
     rightDetailBox.add_child(this._createDetailItem(
         this._createDetailItemLabel(Translations.MISC.TOTAL),
-        this._createDetailItemValueForChange(transactionResult.total, quoteSummary.CurrencySymbol, transactionResult.totalPercent)
+        this._createDetailItemValueForChange(transactionResult.total, quoteSummary.CurrencyCode || quoteSummary.CurrencySymbol, transactionResult.totalPercent)
     ))
 
     return rightDetailBox
@@ -339,18 +339,22 @@ export const StockCard = GObject.registerClass({
 
     const quoteColorStyleClass = getStockColorStyleClass(change)
 
-    const changeLabel = new St.Label({ style_class: `detail-item-value small-text fwb change tar ${quoteColorStyleClass}`, text: `${roundOrDefault(change)}${currency ? ` ${currency}` : ''}` })
+    const changeLabel = new St.Label({ style_class: `detail-item-value small-text fwb change tar ${quoteColorStyleClass}`, text: formatCurrency(change, currency) })
     detailItem.add_child(changeLabel)
 
     detailItem.add_child(new St.Label({ style_class: 'detail-item-value small-text fwb tar', text: ' / ' }))
 
-    const changePercentLabel = new St.Label({ style_class: `detail-item-value change small-text fwb tar ${quoteColorStyleClass}`, text: `${roundOrDefault(changePercent)} %` })
+    const changePercentLabel = new St.Label({ style_class: `detail-item-value change small-text fwb tar ${quoteColorStyleClass}`, text: `${formatNumber(changePercent)} %` })
     detailItem.add_child(changePercentLabel)
 
     return detailItem
   }
 
   _sync () {
+  }
+
+  _currencyCode () {
+    return this.cardItem.CurrencyCode || this.cardItem.CurrencySymbol
   }
 
   _onDestroy () {

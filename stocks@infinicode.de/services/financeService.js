@@ -1,6 +1,6 @@
 import { cacheOrDefault } from '../helpers/data.js'
 
-import { FINANCE_PROVIDER } from './meta/generic.js'
+import { CHART_INTERVALS, FINANCE_PROVIDER } from './meta/generic.js'
 import { QuoteSummary } from './dto/quoteSummary.js'
 
 import * as yahooService from '../services/yahooService.js'
@@ -61,12 +61,12 @@ export const getQuoteSummary = async ({ symbol, provider, fallbackName, settings
   })
 }
 
-export const getHistoricalQuotes = async ({ symbol, provider, range = '1y', includeTimestamps = true, settings = null, cancellable = null }) => {
-  return cacheOrDefault(`chart_${symbol}_${provider}_${range}`, () => {
+export const getHistoricalQuotes = async ({ symbol, provider, range = '1y', interval = CHART_INTERVALS.AUTO, includeTimestamps = true, settings = null, cancellable = null }) => {
+  return cacheOrDefault(`chart_${symbol}_${provider}_${range}_${interval}`, () => {
     const service = services[provider]
 
     if (symbol && service) {
-      return service.getHistoricalQuotes({ symbol, range, includeTimestamps, settings, cancellable })
+      return service.getHistoricalQuotes({ symbol, range, interval, includeTimestamps, settings, cancellable })
     }
   })
 }

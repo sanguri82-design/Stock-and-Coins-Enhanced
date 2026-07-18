@@ -3,6 +3,7 @@ export const QuoteHistorical = class QuoteSummary {
     this.MarketStart = null
     this.MarketEnd = null
     this.Data = []
+    this.CandleData = []
     this.VolumeData = []
     this.Error = null
   }
@@ -22,10 +23,27 @@ export const createQuoteHistoricalFromEastMoneyData = (responseData, type, error
   let firstTimeStamp
 
   newObject.Data = []
+  newObject.CandleData = []
   newObject.VolumeData = []
+  let previousClose = null
 
   seriesData.forEach(rawValue => {
-    const [rawTimestamp, close, volume, open] = rawValue.split(',')
+    const values = rawValue.split(',')
+    const rawTimestamp = values[0]
+    let open
+    let close
+    let high
+    let low
+    let volume
+
+    if (type === 'klines') {
+      ;[, open, close, high, low, volume] = values
+    } else {
+      ;[, close, volume] = values
+      open = previousClose ?? close
+      high = Math.max(Number(open), Number(close))
+      low = Math.min(Number(open), Number(close))
+    }
 
     const timestamp = new Date(rawTimestamp).valueOf()
 
@@ -34,7 +52,9 @@ export const createQuoteHistoricalFromEastMoneyData = (responseData, type, error
     }
 
     newObject.Data.push([timestamp, close])
+    newObject.CandleData.push([timestamp, open, high, low, close])
     newObject.VolumeData.push([timestamp, volume])
+    previousClose = close
   })
 
   if (data.tradePeriods && data.tradePeriods.periods) {
@@ -62,15 +82,27 @@ export const createQuoteHistoricalFromYahooData = (responseData, error) => {
   if (responseData && responseData.chart && responseData.chart.result) {
     const result = responseData.chart.result[0]
     const timestamps = result.timestamp || []
-    const quotes = (result.indicators.quote || [])[0].close || []
-    const volumes = (result.indicators.quote || [])[0].volume || []
+    const quoteData = (result.indicators.quote || [])[0] || {}
+    const quotes = quoteData.close || []
+    const opens = quoteData.open || []
+    const highs = quoteData.high || []
+    const lows = quoteData.low || []
+    const volumes = quoteData.volume || []
 
     newObject.Data = []
+    newObject.CandleData = []
     newObject.VolumeData = []
 
     timestamps.forEach((timestamp, index) => {
-      newObject.Data.push([timestamp * 1000, quotes[index]])
-      newObject.VolumeData.push([timestamp * 1000, volumes[index]])
+      const timestampMs = timestamp * 1000
+      const close = quotes[index]
+      const open = opens[index] ?? close
+      const high = highs[index] ?? Math.max(open, close)
+      const low = lows[index] ?? Math.min(open, close)
+
+      newObject.Data.push([timestampMs, close])
+      newObject.CandleData.push([timestampMs, open, high, low, close])
+      newObject.VolumeData.push([timestampMs, volumes[index]])
     })
 
     if (result.meta && result.meta.tradingPeriods) {

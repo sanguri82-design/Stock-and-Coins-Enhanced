@@ -19,6 +19,7 @@ export const QuoteSummary = class QuoteSummary {
     this.High = null
     this.Volume = null
     this.CurrencySymbol = null
+    this.CurrencyCode = null
     this.ExchangeName = null
 
     this.MarketState = null
@@ -63,6 +64,7 @@ export const createQuoteSummaryFromEastMoneyData = ({ symbol, quoteData, error }
     newObject.Volume = data.f47
     // newObject.CurrencySymbol = data.f111 !== 2 ? '元' : null // 2 are shares, 0,5,1 are markets or indices
     newObject.CurrencySymbol = '元' // don't really know let's assume it's always renminbi, f111 seems not to be the instrument type
+    newObject.CurrencyCode = 'CNY'
     newObject.ExchangeName = MARKETS[data.f107] || Translations.UNKNOWN
 
     newObject.MarketState = MARKET_STATES.REGULAR
@@ -128,6 +130,7 @@ export const createQuoteSummaryFromYahooData = ({ symbol, quoteData, error }) =>
       newObject.High = priceData.regularMarketDayHigh
       newObject.Volume = priceData.regularMarketVolume
       newObject.CurrencySymbol = priceData.currencySymbol
+      newObject.CurrencyCode = priceData.currency
       newObject.ExchangeName = priceData.exchangeName || priceData.fullExchangeName
 
       newObject.MarketState = priceData.marketState
@@ -191,6 +194,7 @@ export const createQuoteSummaryFromYahooDataV6 = ({ symbol, quoteData, error }) 
       newObject.High = priceData.regularMarketDayHigh.raw
       newObject.Volume = priceData.regularMarketVolume.raw
       newObject.CurrencySymbol = priceData.currencySymbol
+      newObject.CurrencyCode = priceData.currency
       newObject.ExchangeName = priceData.exchangeName
 
       newObject.MarketState = priceData.marketState

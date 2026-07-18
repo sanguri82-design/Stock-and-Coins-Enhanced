@@ -87,6 +87,15 @@ export const initTranslations = (_) => {
       }
     },
     CHART: {
+      INTERVALS: {
+        AUTO: _('Auto'),
+        FIVE_MINUTES: _('5m'),
+        FIFTEEN_MINUTES: _('15m'),
+        HOUR: _('1h'),
+        DAY: _('1D'),
+        WEEK: _('1W'),
+        MONTH: _('1M')
+      },
       RANGES: {
         INTRADAY: _('1D'),
         WEEK: _('5D'),

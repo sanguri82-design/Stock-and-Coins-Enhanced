@@ -1,8 +1,20 @@
-import Cogl from 'gi://Cogl'
 import GObject from 'gi://GObject'
 import St from 'gi://St'
 
-import { closest, fallbackIfNaN, isNullOrEmpty, isNullOrUndefined, getComplementaryColor } from '../../helpers/data.js'
+import { closest, fallbackIfNaN, isNullOrEmpty, isNullOrUndefined } from '../../helpers/data.js'
+
+const CHART_COLORS = {
+  positive: '#ef4444ff',
+  negative: '#3b82f6ff',
+  neutral: '#000000ff',
+  volumePositive: '#ef4444ff',
+  volumeNegative: '#3b82f6ff',
+  volumeNeutral: '#000000ff',
+  accent: '#a78bfaff'
+}
+
+const PRICE_AREA_HEIGHT_RATIO = 0.76
+const PRICE_AREA_TOP_PADDING = 8
 
 export const Chart = GObject.registerClass({
   GTypeName: 'StockExtension_Chart',
@@ -12,10 +24,12 @@ export const Chart = GObject.registerClass({
     }
   }
 }, class Chart extends St.DrawingArea {
-  _init ({ data, x1, x2, barData, onDraw, additionalYData, maxGapSize }) {
+  _init ({ data, candleData, x1, x2, barData, onDraw, additionalYData, maxGapSize }) {
     super._init({
       style_class: 'chart',
-      reactive: true
+      reactive: true,
+      width: 500,
+      height: 300
     })
 
     // time series data, [[x, y]]; x = timestamp , y = value
@@ -26,11 +40,17 @@ export const Chart = GObject.registerClass({
     const [cleanedBarData] = this.removeTimeGaps(barData, maxGapSize)
     this.barData = cleanedBarData
 
+    const [cleanedCandleData] = this.removeTimeGaps(candleData, maxGapSize)
+    this.candleData = cleanedCandleData
+
     this.x1 = x1
     this.x2 = x2 - totalTimeShiftMillis
 
     this._selectedX = null
     this._selectedY = null
+    this._selectedPoint = null
+    this._surfaceWidth = 500
+    this._surfaceHeight = 300
     this._onDraw = onDraw
     this._additionalYData = additionalYData || []
     this._userLines = []
@@ -39,6 +59,11 @@ export const Chart = GObject.registerClass({
     this.connect('button-press-event', this._onClick.bind(this))
     this.connect('motion-event', this._onHover.bind(this))
     this.connect('leave-event', this._onLeave.bind(this))
+    this.connect('notify::mapped', () => {
+      if (this.mapped) {
+        this.queue_repaint()
+      }
+    })
   }
 
   _draw () {
@@ -47,35 +72,40 @@ export const Chart = GObject.registerClass({
       return
     }
 
-    // Check if the actor has been allocated before trying to draw
-    if (!this.get_stage() || this.get_width() === 0 || this.get_height() === 0) {
-      return
-    }
-
     const cairoContext = this.get_context()
     const [width, height] = this.get_surface_size()
 
-    this.width = width
-    this.height = height
+    // During the popup animation the actor can temporarily have no drawable
+    // surface. Do not rely on get_stage()/get_width() here because doing so can
+    // leave the newly-created surface blank without another repaint.
+    if (width <= 0 || height <= 0) {
+      cairoContext.$dispose()
+      return
+    }
+
+    // Keep the drawable surface dimensions separate from Clutter.Actor's
+    // width/height properties. Assigning the content size back to the actor
+    // would subtract the CSS border again on every repaint and progressively
+    // shrink the chart to zero.
+    this._surfaceWidth = width
+    this._surfaceHeight = height
 
     // get primary color from themes
     const themeNode = this.get_theme_node()
 
-    // FIXME: it would be nice to have some basic color sets in gnome-shell
     const fgColor = themeNode.get_foreground_color()
-
-    const newColorString = getComplementaryColor(fgColor.to_string().slice(1, 7), false)
-    const secondaryColor = Cogl.Color.from_string(`${newColorString}ff`)[1]
+    const secondaryColor = this._getColor(CHART_COLORS.accent)
 
     const baseParams = {
       cairoContext,
       width,
       height,
       primaryColor: fgColor,
-      secondaryColor: secondaryColor
+      secondaryColor
     }
 
-    this._draw_line_chart(baseParams)
+    this._draw_grid(baseParams)
+    this._draw_candlesticks(baseParams)
     this._draw_volume_bars(baseParams)
     this._draw_crosshair(baseParams)
     this._draw_user_lines(baseParams)
@@ -88,74 +118,115 @@ export const Chart = GObject.registerClass({
     cairoContext.$dispose()
   }
 
-  _draw_line_chart ({ width, height, cairoContext, primaryColor }) {
-    // scale data to width / height of our cairo canvas
-    const seriesData = this._transformSeriesData(this.data, width, height)
+  _draw_grid ({ width, height, cairoContext, primaryColor }) {
+    cairoContext.setSourceRGBA(
+        this._normalizeColorComponent(primaryColor.red),
+        this._normalizeColorComponent(primaryColor.green),
+        this._normalizeColorComponent(primaryColor.blue),
+        0.10
+    )
+    cairoContext.setLineWidth(0.5)
 
-    cairoContext.setSourceRGBA(primaryColor.red, primaryColor.green, primaryColor.blue, 0.4);
+    for (let index = 1; index < 5; index++) {
+      const y = Math.round((height / 5) * index) + 0.5
+      cairoContext.moveTo(0, y)
+      cairoContext.lineTo(width, y)
+    }
 
-    // get first data
-    const [firstValueX, firstValueY] = [0, 0]
+    for (let index = 1; index < 6; index++) {
+      const x = Math.round((width / 6) * index) + 0.5
+      cairoContext.moveTo(x, 0)
+      cairoContext.lineTo(x, height)
+    }
 
-    // tell cairo where to start drawing
-    cairoContext.moveTo(firstValueX, height - firstValueY)
+    cairoContext.stroke()
+  }
 
-    let lastValueX = firstValueX
+  _draw_candlesticks ({ width, height, cairoContext }) {
+    if (isNullOrEmpty(this.candleData)) {
+      return
+    }
 
-    seriesData.forEach(([valueX, valueY]) => {
-      if (isNullOrUndefined(valueX) || isNullOrUndefined(fallbackIfNaN(valueY, null))) {
+    const [minValueX, maxValueX] = this.getXRange(this.candleData)
+    const bodyWidth = Math.max(1, Math.min(8, (width / this.candleData.length) * 0.68))
+    const positiveColor = this._getColor(CHART_COLORS.positive)
+    const negativeColor = this._getColor(CHART_COLORS.negative)
+    const neutralColor = this._getColor(CHART_COLORS.neutral)
+
+    this.candleData.forEach(([timestamp, rawOpen, rawHigh, rawLow, rawClose]) => {
+      const open = Number(rawOpen)
+      const high = Number(rawHigh)
+      const low = Number(rawLow)
+      const close = Number(rawClose)
+
+      if ([timestamp, open, high, low, close].some(value => isNaN(value))) {
         return
       }
 
-      // draw next line
-      cairoContext.lineTo(valueX, height - valueY)
+      const x = this.encodeValue(timestamp, minValueX, maxValueX, 0, width)
+      const highY = this.getPriceY(high, height)
+      const lowY = this.getPriceY(low, height)
+      const openY = this.getPriceY(open, height)
+      const closeY = this.getPriceY(close, height)
+      const color = close > open
+          ? positiveColor
+          : close < open
+              ? negativeColor
+              : neutralColor
 
-      lastValueX = valueX
+      // High-low wick.
+      cairoContext.setSourceRGBA(color.red, color.green, color.blue, 0.95)
+      cairoContext.setLineWidth(Math.max(1, bodyWidth * 0.18))
+      cairoContext.moveTo(x, highY)
+      cairoContext.lineTo(x, lowY)
+      cairoContext.stroke()
+
+      // Open-close body. A minimum height keeps doji candles visible.
+      const bodyTop = Math.min(openY, closeY)
+      const bodyHeight = Math.max(2, Math.abs(closeY - openY))
+      cairoContext.setSourceRGBA(color.red, color.green, color.blue, 0.90)
+      cairoContext.rectangle(x - (bodyWidth / 2), bodyTop, bodyWidth, bodyHeight)
+      cairoContext.fill()
     })
-
-    // draw line from last point to bottom
-    cairoContext.lineTo(lastValueX, height)
-    cairoContext.lineTo(firstValueX, height)
-
-    // render
-    cairoContext.fill()
   }
 
-  _draw_volume_bars ({ width, height, cairoContext, secondaryColor }) {
+  _draw_volume_bars ({ width, height, cairoContext }) {
     if (isNullOrEmpty(this.barData)) {
       return
     }
 
-    const volumeBarsHeight = height * 0.20 // use the 20% space at bottom
+    const volumeBarsHeight = height * 0.16
     const seriesData = this._transformSeriesData(this.barData, width, volumeBarsHeight)
 
-    const barWidth = 3
-    const barWidthPerSide = barWidth / 3 // left, middle, right
+    const barWidth = Math.max(1, Math.min(5, (width / seriesData.length) * 0.65))
+    const positiveColor = this._getColor(CHART_COLORS.volumePositive)
+    const negativeColor = this._getColor(CHART_COLORS.volumeNegative)
+    const neutralColor = this._getColor(CHART_COLORS.volumeNeutral)
+    const candlesByTimestamp = new Map(this.candleData.map(candle => [candle[0], candle]))
 
-    cairoContext.setSourceRGBA(secondaryColor.red, secondaryColor.green, secondaryColor.blue, 0.5);
-
-    cairoContext.moveTo(0, height)
-
-    seriesData.forEach(([valueX, valueY]) => {
+    seriesData.forEach(([valueX, valueY], index) => {
       if (isNullOrUndefined(valueX) || isNullOrUndefined(fallbackIfNaN(valueY, null))) {
         return
       }
 
-      const x_start = valueX - barWidthPerSide
-      const x_end = valueX + barWidthPerSide
+      const timestamp = this.barData[index]?.[0]
+      const candle = candlesByTimestamp.get(timestamp)
+      const open = Number(candle?.[1])
+      const close = Number(candle?.[4])
+      const color = !candle || isNaN(open) || isNaN(close) || close === open
+          ? neutralColor
+          : close > open
+              ? positiveColor
+              : negativeColor
 
-      cairoContext.lineTo(x_start, height)
-      cairoContext.lineTo(x_start, height - valueY)
-      cairoContext.lineTo(x_end, height - valueY)
-      cairoContext.lineTo(x_end, height)
+      cairoContext.setSourceRGBA(color.red, color.green, color.blue, 0.36)
+      cairoContext.rectangle(valueX - (barWidth / 2), height - valueY, barWidth, valueY)
+      cairoContext.fill()
     })
-
-    cairoContext.lineTo(0, height)
-    cairoContext.fill()
   }
 
   _draw_crosshair ({ width, height, cairoContext, secondaryColor }) {
-    if (this._selectedX) {
+    if (!isNullOrUndefined(this._selectedX)) {
       this.draw_line({
         y1: 0,
         y2: height,
@@ -166,7 +237,7 @@ export const Chart = GObject.registerClass({
       })
     }
 
-    if (this._selectedY) {
+    if (!isNullOrUndefined(this._selectedY)) {
       this.draw_line({
         x1: 0,
         x2: width,
@@ -175,6 +246,16 @@ export const Chart = GObject.registerClass({
         cairoContext,
         color: secondaryColor
       })
+    }
+
+    if (this._selectedPoint) {
+      cairoContext.arc(this._selectedPoint.x, this._selectedPoint.y, 4, 0, Math.PI * 2)
+      cairoContext.setSourceRGBA(secondaryColor.red, secondaryColor.green, secondaryColor.blue, 1)
+      cairoContext.fill()
+
+      cairoContext.arc(this._selectedPoint.x, this._selectedPoint.y, 7, 0, Math.PI * 2)
+      cairoContext.setSourceRGBA(secondaryColor.red, secondaryColor.green, secondaryColor.blue, 0.28)
+      cairoContext.fill()
     }
   }
 
@@ -195,13 +276,14 @@ export const Chart = GObject.registerClass({
         y1,
         y2,
         cairoContext,
-        color: Cogl.Color.from_string('#ff0000ff')[1],
+        color: this._getColor(CHART_COLORS.accent),
         lineWidth: 1.5
       })
     })
   }
 
   draw_line ({ x1, x2, y1, y2, cairoContext, color, dashed, lineWidth = 0.5 }) {
+    cairoContext.save()
     cairoContext.setSourceRGBA(color.red, color.green, color.blue, 1);
     cairoContext.setLineWidth(lineWidth)
 
@@ -212,6 +294,7 @@ export const Chart = GObject.registerClass({
     cairoContext.moveTo(x1, y1)
     cairoContext.lineTo(x2, y2)
     cairoContext.stroke()
+    cairoContext.restore()
   }
 
   _transformSeriesData (data, width, height) {
@@ -284,14 +367,18 @@ export const Chart = GObject.registerClass({
 
     const [minValueX, maxValueX] = this.getXRange()
 
-    const hoveredValueX = this.decodeValue(chartX, minValueX, maxValueX, 0, this.width)
+    const hoveredValueX = this.decodeValue(chartX, minValueX, maxValueX, 0, this._surfaceWidth)
     const originalValueX = closest(this.data.filter(data => data[1] !== null).map(data => data[0]), hoveredValueX)
 
     const tsItem = this.data.find(data => data[0] === originalValueX)
     this.emit('chart-hover', tsItem[2] || tsItem[0], tsItem[1])
 
-    this._selectedX = chartX
-    this._selectedY = chartY
+    const selectedX = this.encodeValue(tsItem[0], minValueX, maxValueX, 0, this._surfaceWidth)
+    const selectedY = this.getPriceY(tsItem[1], this._surfaceHeight)
+
+    this._selectedX = selectedX
+    this._selectedY = selectedY
+    this._selectedPoint = { x: selectedX, y: selectedY }
 
     this.queue_repaint()
   }
@@ -299,6 +386,7 @@ export const Chart = GObject.registerClass({
   _onLeave () {
     this._selectedX = null
     this._selectedY = null
+    this._selectedPoint = null
 
     this.emit('chart-hover', null, null)
 
@@ -319,15 +407,35 @@ export const Chart = GObject.registerClass({
   }
 
   getYRange (data) {
-    data = data || this.data
+    if (!data && !isNullOrEmpty(this.candleData)) {
+      const candleValues = this.candleData.flatMap(item => [item[2], item[3]])
+      return this._createValueRange([...this._additionalYData, ...candleValues])
+    }
 
+    data = data || this.data
     if (!data) {
       return
     }
 
-    const yValues = [...this._additionalYData, ...data.map(item => item[1])]
-        .filter(item => !isNullOrUndefined(item))
-        .map(item => item)
+    return this._createValueRange([...this._additionalYData, ...data.map(item => item[1])])
+  }
+
+  getPriceY (value, height = this._surfaceHeight) {
+    const [minValueY, maxValueY] = this.getYRange()
+    const priceAreaHeight = height * PRICE_AREA_HEIGHT_RATIO
+
+    return PRICE_AREA_TOP_PADDING + priceAreaHeight -
+        this.encodeValue(value, minValueY, maxValueY, 0, priceAreaHeight)
+  }
+
+  _createValueRange (values) {
+    const yValues = values
+        .map(Number)
+        .filter(item => !isNaN(item))
+
+    if (isNullOrEmpty(yValues)) {
+      return [0, 1]
+    }
 
     let minValueY = Math.min(...yValues)
     let maxValueY = Math.max(...yValues)
@@ -349,27 +457,20 @@ export const Chart = GObject.registerClass({
 
     data = data.filter(item => !isNullOrUndefined(item[1]))
 
-    let previousTimeSeriesItem = null
+    let previousOriginalX = null
 
     const gapCleanedData = data.map(item => {
-      if (!previousTimeSeriesItem) {
-        previousTimeSeriesItem = item
-        return item
-      }
-
-      const previousX = previousTimeSeriesItem[2] || previousTimeSeriesItem[0]
       const originalX = item[0]
-      const originalY = item[1]
 
-      const gapInMillis = originalX - previousX
-
-      if (gapInMillis >= maxGapInMillis) {
-        totalTimeShiftMillis += gapInMillis
+      if (previousOriginalX !== null) {
+        const gapInMillis = originalX - previousOriginalX
+        if (gapInMillis >= maxGapInMillis) {
+          totalTimeShiftMillis += gapInMillis
+        }
       }
 
-      const newItem = [originalX - totalTimeShiftMillis, originalY, originalX]
-
-      previousTimeSeriesItem = newItem
+      const newItem = [originalX - totalTimeShiftMillis, ...item.slice(1), originalX]
+      previousOriginalX = originalX
 
       return newItem
     })
@@ -379,11 +480,33 @@ export const Chart = GObject.registerClass({
 
   // thx: https://stackoverflow.com/a/5732390/3828502
   encodeValue (value, minValue, maxValue, encodeMin, encodeMax) {
+    if (minValue === maxValue) {
+      return (encodeMin + encodeMax) / 2
+    }
+
     return encodeMin + ((encodeMax - encodeMin) / (maxValue - minValue)) * (value - minValue)
   }
 
   decodeValue (value, minValue, maxValue, encodeMin, encodeMax) {
+    if (encodeMin === encodeMax) {
+      return minValue
+    }
+
     return minValue + ((maxValue - minValue) / (encodeMax - encodeMin)) * (value - encodeMin)
+  }
+
+  _getColor (colorString) {
+    const hex = colorString.replace('#', '').slice(0, 6)
+
+    return {
+      red: parseInt(hex.slice(0, 2), 16) / 255,
+      green: parseInt(hex.slice(2, 4), 16) / 255,
+      blue: parseInt(hex.slice(4, 6), 16) / 255
+    }
+  }
+
+  _normalizeColorComponent (component) {
+    return component > 1 ? component / 255 : component
   }
 
 })

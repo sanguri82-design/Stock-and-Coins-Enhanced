@@ -120,3 +120,20 @@ export const moveDecimal = (value, decimalPlaces) => {
 }
 
 export const roundOrDefault = (number, defaultValue = '--') => isNullOrUndefined(number) ? defaultValue : (Math.round((number + Number.EPSILON) * 100) / 100).toFixed(2)
+
+export const formatNumber = (number, defaultValue = '--', decimalPlaces = 2) => {
+  if (isNullOrUndefined(number) || isNaN(number)) {
+    return defaultValue
+  }
+
+  return new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: decimalPlaces,
+    maximumFractionDigits: decimalPlaces
+  }).format(Number(number))
+}
+
+export const formatCurrency = (number, currencyCode, defaultValue = '--') => {
+  const decimalPlaces = currencyCode === 'KRW' ? 0 : 2
+  const formattedNumber = formatNumber(number, defaultValue, decimalPlaces)
+  return currencyCode ? `${formattedNumber} ${currencyCode}` : formattedNumber
+}

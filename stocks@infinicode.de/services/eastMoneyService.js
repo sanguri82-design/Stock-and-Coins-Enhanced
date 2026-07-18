@@ -2,8 +2,8 @@ import { toLocalDateFormat } from '../helpers/data.js'
 import { fetch } from '../helpers/fetch.js'
 import { createQuoteSummaryFromEastMoneyData } from './dto/quoteSummary.js'
 import { createQuoteHistoricalFromEastMoneyData } from './dto/quoteHistorical.js'
-import { CHART_RANGES } from './meta/generic.js'
-import { INTERVAL_MAPPINGS } from './meta/eastMoney.js'
+import { CHART_INTERVALS, CHART_RANGES } from './meta/generic.js'
+import { AUTO_INTERVAL_MAPPINGS, INTERVAL_MAPPINGS } from './meta/eastMoney.js'
 
 const API_ENDPOINT = 'https://push2his.eastmoney.com'
 const API_VERSION_SUMMARY = 'api/qt/stock/get'
@@ -12,7 +12,8 @@ const API_VERSION_HISTORY_CHART = 'api/qt/stock/kline/get'
 
 const API_SUMMARY_FIELDS = 'f43,f44,f45,f46,f47,f57,f58,f59,f60,f86,f107,f111,f169,f170,f493'
 const API_CHART_FIELDS = 'f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f12,f13,f14,f15,f16,f17,f18,f20,f21,f23,f24,f25,f22,f11,f51,f53,f56,f58,f62,f128,f136,f115,f152'
-const API_CHART_SERIES_FIELDS = 'f51,f53,f56,f58,f86'
+const API_TREND_SERIES_FIELDS = 'f51,f53,f56,f58,f86'
+const API_KLINE_SERIES_FIELDS = 'f51,f52,f53,f54,f55,f56'
 
 const defaultQueryParameters = {}
 
@@ -38,18 +39,20 @@ export const getQuoteSummary = async ({ symbol, cancellable = null }) => {
   return createQuoteSummaryFromEastMoneyData(params)
 }
 
-export const getHistoricalQuotes = async ({ symbol, range = '1mo', cancellable = null }) => {
+export const getHistoricalQuotes = async ({ symbol, range = '1mo', interval = CHART_INTERVALS.AUTO, cancellable = null }) => {
   const queryParameters = {
     ...defaultQueryParameters,
     secid: symbol,
-    fields1: API_CHART_FIELDS,
-    fields2: API_CHART_SERIES_FIELDS
+    fields1: API_CHART_FIELDS
   }
 
-  if (range === CHART_RANGES.INTRADAY) {
+  if (range === CHART_RANGES.INTRADAY && interval === CHART_INTERVALS.AUTO) {
     return _getIntradayQuotes({ queryParameters, cancellable })
   } else {
-    return _getHistoricalQuotes({ queryParameters, range, cancellable })
+    const providerInterval = interval === CHART_INTERVALS.AUTO
+        ? AUTO_INTERVAL_MAPPINGS[range]
+        : INTERVAL_MAPPINGS[interval]
+    return _getHistoricalQuotes({ queryParameters, range, interval: providerInterval, cancellable })
   }
 }
 
@@ -63,6 +66,7 @@ const _getIntradayQuotes = async ({ queryParameters, cancellable = null }) => {
 
   queryParameters = {
     ...queryParameters,
+    fields2: API_TREND_SERIES_FIELDS,
     ndays: 1
   }
 
@@ -75,14 +79,15 @@ const _getIntradayQuotes = async ({ queryParameters, cancellable = null }) => {
   }
 }
 
-const _getHistoricalQuotes = async ({ queryParameters, range, cancellable = null }) => {
+const _getHistoricalQuotes = async ({ queryParameters, range, interval, cancellable = null }) => {
   const url = `${API_ENDPOINT}/${API_VERSION_HISTORY_CHART}`
 
   const [startDate, endDate] = _createDateRange(range)
 
   queryParameters = {
     ...queryParameters,
-    klt: INTERVAL_MAPPINGS[range],
+    fields2: API_KLINE_SERIES_FIELDS,
+    klt: interval,
     fqt: 1, // 1 before rehabilitation, 2 after rehabilitation
     beg: toLocalDateFormat(startDate, '%Y%m%d'),
     end: toLocalDateFormat(endDate, '%Y%m%d')
@@ -103,7 +108,10 @@ const _createDateRange = range => {
   let startDate
 
   switch (range) {
-    default:
+    case CHART_RANGES.INTRADAY:
+      startDate = new Date(_manipulateDate(endDate.valueOf(), -1))
+      return [startDate, endDate]
+
     case CHART_RANGES.WEEK:
       startDate = new Date(_manipulateDate(endDate.valueOf(), -7))
       return [startDate, endDate]
@@ -130,6 +138,10 @@ const _createDateRange = range => {
 
     case CHART_RANGES.MAX:
       startDate = new Date(toLocalDateFormat(endDate, `${endDate.getFullYear() - 20}-%m-%d`))
+      return [startDate, endDate]
+
+    default:
+      startDate = new Date(_manipulateDate(endDate.valueOf(), -30))
       return [startDate, endDate]
   }
 }

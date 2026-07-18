@@ -7,10 +7,10 @@ import { Chart } from '../../chart/chart.js'
 import { StockDetails } from '../../stocks/stockDetails.js'
 import { SearchBar } from '../../searchBar/searchBar.js'
 
-import { clearCache, roundOrDefault, getStockColorStyleClass, toLocalDateFormat } from '../../../helpers/data.js'
+import { clearCache, formatCurrency, formatNumber, getStockColorStyleClass, toLocalDateFormat } from '../../../helpers/data.js'
 import { Translations } from '../../../helpers/translations.js'
 
-import { CHART_RANGES, CHART_RANGES_MAX_GAP } from '../../../services/meta/generic.js'
+import { CHART_INTERVALS, CHART_INTERVALS_BY_RANGE, CHART_INTERVALS_MAX_GAP, CHART_RANGES, CHART_RANGES_MAX_GAP } from '../../../services/meta/generic.js'
 import * as FinanceService from '../../../services/financeService.js'
 
 export const StockDetailsScreen = GObject.registerClass({
@@ -28,6 +28,7 @@ export const StockDetailsScreen = GObject.registerClass({
     this._passedQuoteSummary = quoteSummary
     this._portfolioId = portfolioId
     this._selectedChartRange = CHART_RANGES.INTRADAY
+    this._selectedChartInterval = CHART_INTERVALS.AUTO
     this._quoteSummary = null
 
     this._sync().catch(e => console.error(e))
@@ -45,6 +46,7 @@ export const StockDetailsScreen = GObject.registerClass({
         symbol: this._passedQuoteSummary.Symbol,
         provider: this._passedQuoteSummary.Provider,
         range: this._selectedChartRange,
+        interval: this._selectedChartInterval,
         settings: this._settings
       })
     ])
@@ -102,6 +104,7 @@ export const StockDetailsScreen = GObject.registerClass({
     const stockDetails = new StockDetails({ quoteSummary })
 
     const chartRangeButtonGroup = new ButtonGroup({
+      y_expand: false,
       buttons: Object.keys(CHART_RANGES).map(range => ({
         label: Translations.CHART.RANGES[range],
         value: CHART_RANGES[range],
@@ -111,16 +114,42 @@ export const StockDetailsScreen = GObject.registerClass({
 
     chartRangeButtonGroup.connect('clicked', (_, stButton) => {
       this._selectedChartRange = stButton.buttonData.value
+
+      if (!CHART_INTERVALS_BY_RANGE[this._selectedChartRange].includes(this._selectedChartInterval)) {
+        this._selectedChartInterval = CHART_INTERVALS.AUTO
+      }
+
+      this._sync().catch(e => console.error(e))
+    })
+
+    const chartIntervalButtonGroup = new ButtonGroup({
+      style_class: 'chart-interval-button-group',
+      enableScrollbar: false,
+      y_expand: false,
+      buttons: Object.keys(CHART_INTERVALS)
+          .filter(key => CHART_INTERVALS_BY_RANGE[this._selectedChartRange].includes(CHART_INTERVALS[key]))
+          .map(key => ({
+            label: Translations.CHART.INTERVALS[key],
+            value: CHART_INTERVALS[key],
+            selected: CHART_INTERVALS[key] === this._selectedChartInterval
+          }))
+    })
+
+    chartIntervalButtonGroup.connect('clicked', (_, stButton) => {
+      this._selectedChartInterval = stButton.buttonData.value
       this._sync().catch(e => console.error(e))
     })
 
     this._chart = new Chart({
       data: quoteHistorical.Data,
+      candleData: quoteHistorical.CandleData,
       x1: quoteHistorical.MarketStart,
       x2: quoteHistorical.MarketEnd,
       barData: quoteHistorical.VolumeData,
       additionalYData: this._isIntrayDayChart ? [this._quoteSummary.PreviousClose] : [],
-      maxGapSize: CHART_RANGES_MAX_GAP[this._selectedChartRange],
+      maxGapSize: this._selectedChartInterval === CHART_INTERVALS.AUTO
+          ? CHART_RANGES_MAX_GAP[this._selectedChartRange]
+          : CHART_INTERVALS_MAX_GAP[this._selectedChartInterval],
       onDraw: this._onChartDraw.bind(this)
     })
 
@@ -143,12 +172,13 @@ export const StockDetailsScreen = GObject.registerClass({
         return
       }
 
-      const changeAbsolute = roundOrDefault(this._quoteSummary.Close - y)
-      const changePercentage = roundOrDefault((this._quoteSummary.Close / y * 100) - 100)
+      const currencyCode = this._quoteSummary.CurrencyCode || this._quoteSummary.CurrencySymbol
+      const changeAbsolute = formatCurrency(this._quoteSummary.Close - y, currencyCode)
+      const changePercentage = formatNumber((this._quoteSummary.Close / y * 100) - 100)
 
       const changeColorStyleClass = getStockColorStyleClass(changePercentage)
 
-      chartValueLabel.text = `${toLocalDateFormat(x, Translations.FORMATS.DEFAULT_DATE_TIME)} ${roundOrDefault(y)}`
+      chartValueLabel.text = `${toLocalDateFormat(x, Translations.FORMATS.DEFAULT_DATE_TIME)} ${formatCurrency(y, currencyCode)}`
       chartValueChangeLabel.text = `(${changeAbsolute} / ${changePercentage} %)`
       chartValueChangeLabel.style_class = `chart-hover-change-label ${changeColorStyleClass}`
     })
@@ -159,21 +189,20 @@ export const StockDetailsScreen = GObject.registerClass({
     this.add_child(stockDetails)
 
     this.add_child(chartRangeButtonGroup)
+    this.add_child(chartIntervalButtonGroup)
     this.add_child(this._chart)
     this.add_child(chartValueHoverBox)
   }
 
   _onChartDraw ({ width, height, cairoContext, secondaryColor }) {
     if (this._isIntrayDayChart && this._quoteSummary && this._quoteSummary.PreviousClose) {
-      const [minValueY, maxValueY] = this._chart.getYRange()
-
-      const convertedValue = this._chart.encodeValue(this._quoteSummary.PreviousClose, minValueY, maxValueY, 0, height)
+      const previousCloseY = this._chart.getPriceY(this._quoteSummary.PreviousClose, height)
 
       this._chart.draw_line({
         x1: 0,
         x2: width,
-        y1: height - convertedValue,
-        y2: height - convertedValue,
+        y1: previousCloseY,
+        y2: previousCloseY,
         color: secondaryColor,
         lineWidth: 1,
         dashed: true,

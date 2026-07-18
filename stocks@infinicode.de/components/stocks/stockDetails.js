@@ -2,7 +2,7 @@ import Clutter from 'gi://Clutter'
 import GObject from 'gi://GObject'
 import St from 'gi://St'
 
-import { fallbackIfNaN, roundOrDefault, getStockColorStyleClass, toLocalDateFormat } from '../../helpers/data.js'
+import { formatCurrency, formatNumber, getStockColorStyleClass, toLocalDateFormat } from '../../helpers/data.js'
 import { Translations } from '../../helpers/translations.js'
 import { MARKET_STATES } from '../../services/meta/generic.js'
 
@@ -13,7 +13,7 @@ export const StockDetails = GObject.registerClass({
     super._init({
       style_class: 'stock-details',
       x_expand: true,
-      y_expand: true,
+      y_expand: false,
       vertical: true
     })
 
@@ -34,7 +34,7 @@ export const StockDetails = GObject.registerClass({
     const headerBox = new St.BoxLayout({
       style_class: 'header-box',
       x_expand: true,
-      y_expand: true,
+      y_expand: false,
       y_align: Clutter.ActorAlign.CENTER
     })
 
@@ -60,7 +60,7 @@ export const StockDetails = GObject.registerClass({
     const stockInformationBox = new St.Bin({
       style_class: 'stock-information-box',
       x_expand: true,
-      y_expand: true,
+      y_expand: false,
       child: new St.Label({
         style_class: 'stock-full-name',
         text: quoteSummary.FullName
@@ -76,12 +76,12 @@ export const StockDetails = GObject.registerClass({
     const quoteInformationBox = new St.BoxLayout({
       style_class: 'quote-information-box tar',
       x_expand: false,
-      y_expand: true
+      y_expand: false
     })
 
     const regularQuoteLabel = new St.Label({
       style_class: `quote-label ${quoteColorStyleClass}`,
-      text: `${roundOrDefault(quoteSummary.Close)}${quoteSummary.CurrencySymbol ? ` ${quoteSummary.CurrencySymbol}` : ''}`
+      text: formatCurrency(quoteSummary.Close, this._currencyCode(quoteSummary))
     })
 
     quoteInformationBox.add_child(regularQuoteLabel)
@@ -93,7 +93,7 @@ export const StockDetails = GObject.registerClass({
 
       const preMarketQuoteLabel = new St.Label({
         style_class: `quote-label pre-market ${preMarketQuoteColorStyleClass}`,
-        text: `${roundOrDefault(quoteSummary.PreMarketPrice)}${quoteSummary.CurrencySymbol ? ` ${quoteSummary.CurrencySymbol}` : ''}*`
+        text: `${formatCurrency(quoteSummary.PreMarketPrice, this._currencyCode(quoteSummary))}*`
       })
 
       quoteInformationBox.add_child(preMarketQuoteLabel)
@@ -106,7 +106,7 @@ export const StockDetails = GObject.registerClass({
 
       const postMarketQuoteLabel = new St.Label({
         style_class: `quote-label post-market ${postMarketQuoteColorStyleClass}`,
-        text: `${roundOrDefault(quoteSummary.PostMarketPrice)}${quoteSummary.CurrencySymbol ? ` ${quoteSummary.CurrencySymbol}` : ''}*`
+        text: `${formatCurrency(quoteSummary.PostMarketPrice, this._currencyCode(quoteSummary))}*`
       })
 
       quoteInformationBox.add_child(postMarketQuoteLabel)
@@ -143,31 +143,31 @@ export const StockDetails = GObject.registerClass({
 
     leftDetailBox.add_child(this._createDetailItem(
         this._createDetailItemLabel(Translations.STOCKS.CHANGE),
-        this._createDetailItemValueForChange(quoteSummary.Change, quoteSummary.CurrencySymbol, quoteSummary.ChangePercent)
+        this._createDetailItemValueForChange(quoteSummary.Change, this._currencyCode(quoteSummary), quoteSummary.ChangePercent)
     ))
 
     if (quoteSummary.MarketState === MARKET_STATES.PRE) {
       leftDetailBox.add_child(this._createDetailItem(
           this._createDetailItemLabel(Translations.STOCKS.CHANGE_PRE_MARKET),
-          this._createDetailItemValueForChange(quoteSummary.PreMarketChange, quoteSummary.CurrencySymbol, quoteSummary.PreMarketChangePercent)
+          this._createDetailItemValueForChange(quoteSummary.PreMarketChange, this._currencyCode(quoteSummary), quoteSummary.PreMarketChangePercent)
       ))
     }
 
     if (quoteSummary.MarketState === MARKET_STATES.POST) {
       leftDetailBox.add_child(this._createDetailItem(
           this._createDetailItemLabel(Translations.STOCKS.CHANGE_POST_MARKET),
-          this._createDetailItemValueForChange(quoteSummary.PostMarketChange, quoteSummary.CurrencySymbol, quoteSummary.PostMarketChangePercent)
+          this._createDetailItemValueForChange(quoteSummary.PostMarketChange, this._currencyCode(quoteSummary), quoteSummary.PostMarketChangePercent)
       ))
     }
 
     leftDetailBox.add_child(this._createDetailItem(
         this._createDetailItemLabel(Translations.STOCKS.OPEN),
-        this._createDetailItemValue(roundOrDefault(quoteSummary.Open))
+        this._createDetailItemValue(formatCurrency(quoteSummary.Open, this._currencyCode(quoteSummary)))
     ))
 
     leftDetailBox.add_child(this._createDetailItem(
         this._createDetailItemLabel(Translations.STOCKS.HIGH),
-        this._createDetailItemValue(roundOrDefault(quoteSummary.High))
+        this._createDetailItemValue(formatCurrency(quoteSummary.High, this._currencyCode(quoteSummary)))
     ))
 
     leftDetailBox.add_child(this._createDetailItem(
@@ -193,7 +193,7 @@ export const StockDetails = GObject.registerClass({
 
     rightDetailBox.add_child(this._createDetailItem(
         this._createDetailItemLabel(Translations.STOCKS.PREVIOUS_CLOSE),
-        this._createDetailItemValue(roundOrDefault(quoteSummary.PreviousClose))
+        this._createDetailItemValue(formatCurrency(quoteSummary.PreviousClose, this._currencyCode(quoteSummary)))
     ))
 
     if (quoteSummary.MarketState === MARKET_STATES.PRE) {
@@ -212,17 +212,17 @@ export const StockDetails = GObject.registerClass({
 
     rightDetailBox.add_child(this._createDetailItem(
         this._createDetailItemLabel(Translations.STOCKS.CLOSE),
-        this._createDetailItemValue(roundOrDefault(quoteSummary.Close))
+        this._createDetailItemValue(formatCurrency(quoteSummary.Close, this._currencyCode(quoteSummary)))
     ))
 
     rightDetailBox.add_child(this._createDetailItem(
         this._createDetailItemLabel(Translations.STOCKS.LOW),
-        this._createDetailItemValue(roundOrDefault(quoteSummary.Low))
+        this._createDetailItemValue(formatCurrency(quoteSummary.Low, this._currencyCode(quoteSummary)))
     ))
 
     rightDetailBox.add_child(this._createDetailItem(
         this._createDetailItemLabel(Translations.STOCKS.VOLUME),
-        this._createDetailItemValue(fallbackIfNaN(quoteSummary.Volume))
+        this._createDetailItemValue(formatNumber(quoteSummary.Volume, '--', 0))
     ))
 
     return rightDetailBox
@@ -232,7 +232,7 @@ export const StockDetails = GObject.registerClass({
     const detailItem = new St.BoxLayout({
       style_class: 'detail-item-bin',
       x_expand: true,
-      y_expand: true
+      y_expand: false
     })
 
     detailItem.add_child(label)
@@ -245,7 +245,7 @@ export const StockDetails = GObject.registerClass({
     const detailItemLabel = new St.Bin({
       style_class: 'detail-item-label-bin',
       x_expand: true,
-      y_expand: true,
+      y_expand: false,
       x_align: Clutter.ActorAlign.START,
       child: new St.Label({ style_class: 'detail-item-label', text })
     })
@@ -257,7 +257,7 @@ export const StockDetails = GObject.registerClass({
     const detailItemValue = new St.Bin({
       style_class: 'detail-item-value-bin',
       x_expand: true,
-      y_expand: true,
+      y_expand: false,
       x_align: Clutter.ActorAlign.END,
       child: new St.Label({ style_class: `detail-item-value tar ${additionalStyleClass || ''}`, text: text.toString() })
     })
@@ -275,17 +275,21 @@ export const StockDetails = GObject.registerClass({
 
     const quoteColorStyleClass = getStockColorStyleClass(change)
 
-    const changeLabel = new St.Label({ style_class: `detail-item-value change tar ${quoteColorStyleClass}`, text: `${roundOrDefault(change)}${currency ? ` ${currency}` : ''}` })
+    const changeLabel = new St.Label({ style_class: `detail-item-value change tar ${quoteColorStyleClass}`, text: formatCurrency(change, currency) })
     detailItem.add_child(changeLabel)
 
     detailItem.add_child(new St.Label({ style_class: 'detail-item-value tar', text: ' / ' }))
 
-    const changePercentLabel = new St.Label({ style_class: `detail-item-value change tar ${quoteColorStyleClass}`, text: `${roundOrDefault(changePercent)} %` })
+    const changePercentLabel = new St.Label({ style_class: `detail-item-value change tar ${quoteColorStyleClass}`, text: `${formatNumber(changePercent)} %` })
     detailItem.add_child(changePercentLabel)
 
     return detailItem
   }
 
   _onDestroy () {
+  }
+
+  _currencyCode (quoteSummary) {
+    return quoteSummary.CurrencyCode || quoteSummary.CurrencySymbol
   }
 })

@@ -4,7 +4,7 @@ import GObject from 'gi://GObject'
 import Pango from 'gi://Pango'
 import St from 'gi://St'
 
-import { getStockColorStyleClass, isNullOrEmpty, roundOrDefault } from '../../helpers/data.js'
+import { formatCurrency, formatNumber, getStockColorStyleClass, isNullOrEmpty } from '../../helpers/data.js'
 import { STOCKS_PORTFOLIOS, STOCKS_SYMBOL_PAIRS, STOCKS_TICKER_INTERVAL, STOCKS_USE_PROVIDER_INSTRUMENT_NAMES } from '../../helpers/settings.js'
 
 import { Translations } from '../../helpers/translations.js'
@@ -134,10 +134,8 @@ export const MenuStockTicker = GObject.registerClass({
   }
 
   _createCompactTickerItemBox (quoteSummary) {
-    let { name, currencySymbol, price, change, changePercent, isOffMarket } = this._generateTickerInformation(quoteSummary)
+    const { name, currencyCode, price, change, changePercent, isOffMarket } = this._generateTickerInformation(quoteSummary)
     const quoteColorStyleClass = getStockColorStyleClass(change)
-
-    currencySymbol = currencySymbol || ''
 
     const stockInfoBox = new St.BoxLayout({
       style_class: 'stock-info-box compact',
@@ -157,14 +155,14 @@ export const MenuStockTicker = GObject.registerClass({
       y_align: Clutter.ActorAlign.CENTER,
       y_expand: true,
       style_class: `ticker-stock-quote-label fwb ${quoteColorStyleClass}`,
-      text: `${roundOrDefault(price)}${currencySymbol}`
+      text: formatCurrency(price, currencyCode)
     })
 
     const changeLabel = new St.Label({
       y_align: Clutter.ActorAlign.CENTER,
       y_expand: true,
       style_class: `ticker-stock-quote-change-label fwb ${quoteColorStyleClass}`,
-      text: `${roundOrDefault(change)}  ${roundOrDefault(changePercent)}%${isOffMarket ? '*' : ''}`
+      text: `${formatCurrency(change, currencyCode)}  ${formatNumber(changePercent)}%${isOffMarket ? '*' : ''}`
     })
 
     stockNameLabel.get_clutter_text().set_ellipsize(Pango.EllipsizeMode.NONE)
@@ -179,10 +177,8 @@ export const MenuStockTicker = GObject.registerClass({
   }
 
   _createTremendousTickerItemBox (quoteSummary, regular) {
-    let { name, currencySymbol, price, change, changePercent, isOffMarket } = this._generateTickerInformation(quoteSummary)
+    const { name, currencyCode, price, change, changePercent, isOffMarket } = this._generateTickerInformation(quoteSummary)
     const quoteColorStyleClass = getStockColorStyleClass(change)
-
-    currencySymbol = currencySymbol || ''
 
     const stockInfoBox = new St.BoxLayout({
       style_class: `stock-info-box ${regular ? 'regular' : 'tremendous'}`,
@@ -208,14 +204,14 @@ export const MenuStockTicker = GObject.registerClass({
       y_align: regular ? Clutter.ActorAlign.CENTER : Clutter.ActorAlign.START,
       y_expand: true,
       style_class: `ticker-stock-quote-label fwb ${quoteColorStyleClass}`,
-      text: `${roundOrDefault(price)}${currencySymbol}`
+      text: formatCurrency(price, currencyCode)
     })
 
     const stockQuoteChangeLabel = new St.Label({
       y_align: regular ? Clutter.ActorAlign.CENTER : Clutter.ActorAlign.START,
       y_expand: true,
       style_class: `ticker-stock-quote-change-label fwb ${quoteColorStyleClass}`,
-      text: `(${roundOrDefault(change)}${currencySymbol} | ${roundOrDefault(changePercent)}%)${isOffMarket ? '*' : ''}`
+      text: `(${formatCurrency(change, currencyCode)} | ${formatNumber(changePercent)}%)${isOffMarket ? '*' : ''}`
     })
 
     stockQuoteLabel.get_clutter_text().set_ellipsize(Pango.EllipsizeMode.NONE)
@@ -230,10 +226,8 @@ export const MenuStockTicker = GObject.registerClass({
   }
 
   _createMinimalTickerItemBox (quoteSummary) {
-    let { symbol, currencySymbol, price, change } = this._generateTickerInformation(quoteSummary)
+    const { symbol, currencyCode, price, change } = this._generateTickerInformation(quoteSummary)
     const quoteColorStyleClass = getStockColorStyleClass(change)
-
-    currencySymbol = currencySymbol || ''
 
     const stockInfoBox = new St.BoxLayout({
       style_class: 'stock-info-box compact',
@@ -253,7 +247,7 @@ export const MenuStockTicker = GObject.registerClass({
       y_align: Clutter.ActorAlign.CENTER,
       y_expand: true,
       style_class: `ticker-stock-quote-label fwb ${quoteColorStyleClass}`,
-      text: `${roundOrDefault(price)}${currencySymbol}`
+      text: formatCurrency(price, currencyCode)
     })
 
     stockNameLabel.get_clutter_text().set_ellipsize(Pango.EllipsizeMode.NONE)
@@ -352,7 +346,7 @@ export const MenuStockTicker = GObject.registerClass({
   _generateTickerInformation (quoteSummary) {
     const stockInfoDetails = {
       name: quoteSummary.FullName,
-      currencySymbol: quoteSummary.CurrencySymbol,
+      currencyCode: quoteSummary.CurrencyCode || quoteSummary.CurrencySymbol,
       price: quoteSummary.Close,
       change: quoteSummary.Change,
       changePercent: quoteSummary.ChangePercent,

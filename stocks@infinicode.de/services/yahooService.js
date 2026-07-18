@@ -3,6 +3,7 @@ import { createNewsListFromYahooData } from './dto/newsList.js'
 import { createQuoteHistoricalFromYahooData } from './dto/quoteHistorical.js'
 import { createQuoteSummaryFromYahooData, createQuoteSummaryFromYahooQuoteListData } from './dto/quoteSummary.js'
 import { INTERVAL_MAPPINGS } from './meta/yahoo.js'
+import { CHART_INTERVALS } from './meta/generic.js'
 
 const COOKIE_URL = 'https://fc.yahoo.com/'
 const CRUMB_URL = 'https://query2.finance.yahoo.com/v1/test/getcrumb'
@@ -80,7 +81,7 @@ export const getQuoteList = async ({ symbolsWithFallbackName, settings, cancella
   const queryParameters = {
     ...defaultQueryParameters,
     crumb: yahooMeta.crumb,
-    fields: 'fields=currencySymbol,currency,fromCurrency,toCurrency,exchangeTimezoneName,exchangeTimezoneShortName,preMarketPrice,preMarketChange,preMarketChangePercent,gmtOffSetMilliseconds,regularMarketChange,regularMarketPreviousClose,regularMarketChangePercent,regularMarketVolume,regularMarketPrice,regularMarketTime,preMarketTime,postMarketTime,postMarketPrice,postMarketChange,postMarketChangePercent,exchangeName,longName,extendedMarketTime',
+    fields: 'currencySymbol,currency,fromCurrency,toCurrency,exchangeTimezoneName,exchangeTimezoneShortName,preMarketPrice,preMarketChange,preMarketChangePercent,gmtOffSetMilliseconds,regularMarketChange,regularMarketPreviousClose,regularMarketChangePercent,regularMarketVolume,regularMarketPrice,regularMarketTime,preMarketTime,postMarketTime,postMarketPrice,postMarketChange,postMarketChangePercent,exchangeName,longName,extendedMarketTime',
     symbols: symbolsWithFallbackName.map(item => item.symbol).join()
   }
 
@@ -139,7 +140,7 @@ export const getQuoteSummary = async ({ symbol, settings, cancellable = null }) 
   return createQuoteSummaryFromYahooData(params)
 }
 
-export const getHistoricalQuotes = async ({ symbol, range = '1mo', includeTimestamps = true, settings, cancellable = null }) => {
+export const getHistoricalQuotes = async ({ symbol, range = '1mo', interval = CHART_INTERVALS.AUTO, includeTimestamps = true, settings, cancellable = null }) => {
   const yahooMeta = await ensurePrerequisites(settings, cancellable)
   if (!yahooMeta.isValid) {
     console.warn("[YahooService] Skipping get historical quotes: yahooMeta is invalid")
@@ -151,7 +152,7 @@ export const getHistoricalQuotes = async ({ symbol, range = '1mo', includeTimest
     crumb: yahooMeta.crumb,
     range,
     includePrePost: false,
-    interval: INTERVAL_MAPPINGS[range],
+    interval: interval === CHART_INTERVALS.AUTO ? INTERVAL_MAPPINGS[range] : interval,
     includeTimestamps: includeTimestamps ? 'true' : 'false'
   }
 
