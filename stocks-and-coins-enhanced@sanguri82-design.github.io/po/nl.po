@@ -1,0 +1,516 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the gnome-shell-extension-stocks package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: gnome-shell-extension-stocks\n"
+"Report-Msgid-Bugs-To: https://github.com/sanguri82-design/Stock-and-Coins-"
+"Enhanced/issues\n"
+"POT-Creation-Date: 2026-07-18 13:47+0900\n"
+"PO-Revision-Date: 2023-01-02 22:05+0100\n"
+"Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
+"Language-Team: Dutch <vistausss@fastmail.com>\n"
+"Language: nl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.2.2\n"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/extension.js:66
+msgid "Stocks"
+msgstr "Aandelen"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:6
+msgid "Stocks & Coins Enhanced"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:7
+msgid "Stock and cryptocurrency quotes with candlestick charts"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:9
+msgid "back"
+msgstr "Terug"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:10
+msgid "Filter Results"
+msgstr "Resultaten filteren"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:11
+msgid "Loading Data"
+msgstr "Bezig met laden van gegevens…"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:12
+msgid "No Symbols / Tickers configured."
+msgstr "Geen symbolen/tickers ingesteld."
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:13
+msgid "stocks"
+msgstr "Aandelen"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:14
+msgid "UNKNOWN"
+msgstr "ONBEKEND"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:16
+msgid "Yahoo"
+msgstr "Yahoo"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:17
+msgid "EastMoney"
+msgstr "EastMoney"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:18
+#, fuzzy
+msgid "Binance"
+msgstr "Annuleren"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:19
+msgid "CoinGecko"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:20
+msgid "Coinbase"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:21
+msgid "Upbit"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:24
+msgid "Price could not be parsed"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:25
+msgid "Amount must be a positive number"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:26
+msgid "Date could not be parsed"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:27
+#, fuzzy
+msgid "Transaction Type"
+msgstr "Sessietype"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:28
+msgid "No transactions, use the + Icon in the Search Bar to add transactions."
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:29
+#, javascript-format
+msgid ""
+"%d of this transactions could not be assigned, check if your transactions "
+"are correct"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:32
+msgid "Add Symbol"
+msgstr "Symbool toevoegen"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:33
+msgid "Add Portfolio"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:34
+msgid "Portfolio Name"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:35
+#, javascript-format
+msgid "Changeme %d"
+msgstr "%d wijzigen"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:36
+#, javascript-format
+msgid "List %d"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:37
+msgid "Name"
+msgstr "Naam"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:38
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:71
+msgid "Symbol"
+msgstr "Symbool"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:39
+#, fuzzy
+msgid "Asset Type"
+msgstr "Sessietype"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:40
+#, fuzzy
+msgid "Stock"
+msgstr "Aandelen"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:41
+msgid "Coin"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:42
+msgid "In Ticker?"
+msgstr "Tonen op ticker?"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:43
+msgid " - in Ticker"
+msgstr " - op ticker"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:44
+msgid "Provider"
+msgstr "Dienst"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:45
+#, javascript-format
+msgid "Remove %s?"
+msgstr "%s verwijderen?"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:46
+msgid "General"
+msgstr "Algemeen"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:47
+msgid "Settings"
+msgstr "Voorkeuren"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:48
+msgid "About"
+msgstr "Over"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:49
+msgid "Symbols"
+msgstr "Symbolen"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:50
+#, fuzzy
+msgid "Symbol List"
+msgstr "Symbolen"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:51
+msgid "Portfolios"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:52
+msgid "Portfolio List"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:53
+msgid "Position in Panel"
+msgstr "Positie op bovenbalk"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:54
+msgid "Left"
+msgstr "Links"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:55
+msgid "Center"
+msgstr "Midden"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:56
+msgid "Right"
+msgstr "Rechts"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:58
+msgid "Ticker Display Variation"
+msgstr "Weergavevariatie van tickeritems"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:59
+msgid "Compact"
+msgstr "Compact"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:60
+msgid "Regular"
+msgstr "Normaal"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:61
+msgid "Tremendous"
+msgstr "Groot"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:62
+msgid "Minimal"
+msgstr "Minimal"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:64
+msgid "Items to show in ticker"
+msgstr "Te tonen items op ticker"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:65
+msgid "Stock Panel Ticker Interval in Seconds"
+msgstr "Bijwerktussenpoos van ticker (in seconden)"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:66
+msgid "Data Refresh Interval in Minutes"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:67
+msgid "Show off-market prices in Ticker"
+msgstr "Prijzen buiten de markt tonen op ticker"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:68
+msgid "Use instrument names from provider"
+msgstr "Instrumentnamen van dienst gebruiken"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:72
+msgid "Change"
+msgstr "Wijzigen"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:73
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:85
+msgid "Pre Market*"
+msgstr "Prijs vóór marktwaarde*"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:74
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:86
+msgid "Post Market*"
+msgstr "Prijs na marktwaarde*"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:75
+msgid "Volume"
+msgstr "Hoeveelheid"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:76
+msgid "Exchange"
+msgstr "Beurs"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:77
+msgid "Prev. Close"
+msgstr "Vorige sluiting"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:78
+msgid "Open"
+msgstr "Geopend"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:79
+msgid "Close"
+msgstr "Gesloten"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:80
+msgid "High"
+msgstr "Hoog"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:81
+msgid "Low"
+msgstr "Laag"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:82
+msgid "Time"
+msgstr "Tijdstip"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:83
+msgid "Before Hours*"
+msgstr "Vóór sluitingstijd*"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:84
+msgid "After Hours*"
+msgstr "Na sluitingstijd*"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:87
+msgid "Realized"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:88
+msgid "Value"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:89
+msgid "Cost"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:90
+msgid "Price"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:92
+msgid "Buy"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:93
+msgid "Sell"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:98
+msgid "Auto"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:99
+msgid "5m"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:100
+msgid "15m"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:101
+msgid "1h"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:102
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:107
+msgid "1D"
+msgstr "1D"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:103
+msgid "1W"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:104
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:109
+msgid "1M"
+msgstr "1M"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:108
+msgid "5D"
+msgstr "5D"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:110
+msgid "6M"
+msgstr "6M"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:111
+msgid "YTD"
+msgstr "JTD"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:112
+msgid "1Y"
+msgstr "1J"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:113
+msgid "5Y"
+msgstr "5J"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:114
+msgid "Max"
+msgstr "Max."
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:118
+msgid "Save"
+msgstr "Opslaan"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:119
+msgid "Date"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:120
+msgid "Alltime"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:121
+msgid "Total"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:122
+msgid "Today"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:123
+msgid "Amount"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:124
+msgid "OS"
+msgstr "Besturingssysteem"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:125
+msgid "Extension Version"
+msgstr "Uitbreidingsversie"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:126
+msgid "Git Commit"
+msgstr "Git-commit"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:127
+msgid "GNOME Version"
+msgstr "GNOME-versie"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:128
+msgid "Session Type"
+msgstr "Sessietype"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:131
+msgid "%H:%M:%S %d.%m.%Y"
+msgstr "%H:%M:%S %d %m %Y"
+
+#~ msgid "Stocks Extension"
+#~ msgstr "Aandelenuitbreiding"
+
+#~ msgid "A extension to display stock quotes in GNOME Shell Panel"
+#~ msgstr ""
+#~ "Een uitbreiding die aandelen toont en bijhoudt op de GNOME Shell-bovenbalk"
+
+#~ msgid "Create Stock Item"
+#~ msgstr "Aandeelitem aanmaken"
+
+#~ msgid "Show in Ticker?"
+#~ msgstr "Tonen op ticker?"
+
+#~ msgid "If disabled this stock will not be shown in the panel ticker"
+#~ msgstr ""
+#~ "Schakel uit om dit aandeel niet te tonen op de ticker op de bovenbalk"
+
+#~ msgid "Select provider to fetch stock data from"
+#~ msgstr "Kies welke dienst de aandeelgegevens dient te verstrekken"
+
+#~ msgid "yahoo"
+#~ msgstr "yahoo"
+
+#~ msgid "eastmoney"
+#~ msgstr "eastmoney"
+
+#~ msgid "Edit Stock Item"
+#~ msgstr "Aandeelitem bewerken"
+
+#~ msgid "Edit name"
+#~ msgstr "Naam wijzigen"
+
+#~ msgid "Edit Symbol"
+#~ msgstr "Symbool wijzigen"
+
+#~ msgid "Ticker Item Display Variation"
+#~ msgstr "Weergavevariatie van tickeritems"
+
+#~ msgid ""
+#~ "If enabled the ticker will automatically show pre / post market prices if "
+#~ "available marked by a * sign."
+#~ msgstr ""
+#~ "Schakel in om de ticker automatisch prijzen van voor en na de marktwaarde "
+#~ "te markeren met ‘*’."
+
+#~ msgid ""
+#~ "If enabled the names for instruments will be taken from provider data."
+#~ msgstr ""
+#~ "Schakel in om de instrumentnamen uit de aangeleverde gegevens te halen."
+
+#~ msgid "Version: "
+#~ msgstr "Versie: "
+
+#~ msgid "unknown (self-build ?)"
+#~ msgstr "onbekend (zelf-gecompileerd?)"
+
+#~ msgid ""
+#~ "<span>Stocks-Extension is an extension to display and observe Stock "
+#~ "quotes in GNOME Shell Panel</span>"
+#~ msgstr ""
+#~ "<span>Aandelen is een uitbreiding die aandelen toont en bijhoudt op de "
+#~ "GNOME Shell-bovenbalk</span>"
+
+#~ msgid "Maintained by"
+#~ msgstr "Beheerd door"
+
+#~ msgid ""
+#~ "<span size=\"small\">This program comes with ABSOLUTELY NO WARRANTY. See "
+#~ "the <a href=\"https://www.gnu.org/licenses/gpl\">GNU General Public "
+#~ "License, version 3 or later</a> for details.</span>\n"
+#~ "                                        "
+#~ msgstr ""
+#~ "<span size=\"small\">Deze toepassing biedt GEEN GARANTIE. Bekijk voor "
+#~ "meer informatie de <a href=\"https://www.gnu.org/licenses/gpl\">GNU "
+#~ "General Public License, versie 3 of hoger</a>.</span>\n"
+#~ "                                        "
+
+#~ msgid "Clear entry"
+#~ msgstr "Item wissen"

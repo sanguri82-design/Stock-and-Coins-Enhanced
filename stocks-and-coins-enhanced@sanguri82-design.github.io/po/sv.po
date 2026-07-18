@@ -1,0 +1,520 @@
+# Swedish translations for gnome-shell-extension-stocks package
+# Copyright (C) 2021 THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the gnome-shell-extension-stocks package.
+#  Morgan Antonsson <morgan.antonsson@gmail.com>, 2021.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: gnome-shell-extension-stocks\n"
+"Report-Msgid-Bugs-To: https://github.com/sanguri82-design/Stock-and-Coins-"
+"Enhanced/issues\n"
+"POT-Creation-Date: 2026-07-18 13:47+0900\n"
+"PO-Revision-Date: 2021-11-21 15:13+0100\n"
+"Last-Translator: Morgan Antonsson <morgan.antonsson@gmail.com>\n"
+"Language-Team: \n"
+"Language: sv\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.0\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/extension.js:66
+msgid "Stocks"
+msgstr "Aktier"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:6
+msgid "Stocks & Coins Enhanced"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:7
+msgid "Stock and cryptocurrency quotes with candlestick charts"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:9
+msgid "back"
+msgstr "tillbaka"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:10
+msgid "Filter Results"
+msgstr "Filtrera resultaten"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:11
+msgid "Loading Data"
+msgstr "Laddar data"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:12
+msgid "No Symbols / Tickers configured."
+msgstr "Inga symboler/tickers har konfigurerats."
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:13
+msgid "stocks"
+msgstr "aktier"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:14
+msgid "UNKNOWN"
+msgstr "OKÄND"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:16
+#, fuzzy
+msgid "Yahoo"
+msgstr "yahoo"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:17
+#, fuzzy
+msgid "EastMoney"
+msgstr "eastmoney"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:18
+#, fuzzy
+msgid "Binance"
+msgstr "Avbryt"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:19
+msgid "CoinGecko"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:20
+msgid "Coinbase"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:21
+msgid "Upbit"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:24
+msgid "Price could not be parsed"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:25
+msgid "Amount must be a positive number"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:26
+msgid "Date could not be parsed"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:27
+msgid "Transaction Type"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:28
+msgid "No transactions, use the + Icon in the Search Bar to add transactions."
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:29
+#, javascript-format
+msgid ""
+"%d of this transactions could not be assigned, check if your transactions "
+"are correct"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:32
+#, fuzzy
+msgid "Add Symbol"
+msgstr "Redigera symbol"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:33
+msgid "Add Portfolio"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:34
+msgid "Portfolio Name"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:35
+#, fuzzy, javascript-format
+msgid "Changeme %d"
+msgstr "Förändring"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:36
+#, javascript-format
+msgid "List %d"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:37
+msgid "Name"
+msgstr "Namn"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:38
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:71
+msgid "Symbol"
+msgstr "Symbol"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:39
+msgid "Asset Type"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:40
+#, fuzzy
+msgid "Stock"
+msgstr "Aktier"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:41
+msgid "Coin"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:42
+#, fuzzy
+msgid "In Ticker?"
+msgstr "Visa i ticker?"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:43
+#, fuzzy
+msgid " - in Ticker"
+msgstr "Visa i ticker"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:44
+msgid "Provider"
+msgstr "Leverantör"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:45
+#, javascript-format
+msgid "Remove %s?"
+msgstr "Ta bort %s?"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:46
+msgid "General"
+msgstr "Allmänt"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:47
+msgid "Settings"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:48
+msgid "About"
+msgstr "Om"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:49
+msgid "Symbols"
+msgstr "Symboler"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:50
+#, fuzzy
+msgid "Symbol List"
+msgstr "Symboler"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:51
+msgid "Portfolios"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:52
+msgid "Portfolio List"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:53
+msgid "Position in Panel"
+msgstr "Placering i systemraden"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:54
+msgid "Left"
+msgstr "Vänster"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:55
+msgid "Center"
+msgstr "Mitten"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:56
+msgid "Right"
+msgstr "Höger"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:58
+#, fuzzy
+msgid "Ticker Display Variation"
+msgstr "Visningsalternativ för tickerobjekt"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:59
+msgid "Compact"
+msgstr "Kompakt"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:60
+msgid "Regular"
+msgstr "Normal"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:61
+msgid "Tremendous"
+msgstr "Enorm"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:62
+msgid "Minimal"
+msgstr "Minimal"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:64
+msgid "Items to show in ticker"
+msgstr "Antal objekt som ska visas i ticker"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:65
+msgid "Stock Panel Ticker Interval in Seconds"
+msgstr "Systemradsticker-intervall i sekunder"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:66
+msgid "Data Refresh Interval in Minutes"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:67
+msgid "Show off-market prices in Ticker"
+msgstr "Visa kurser från för-/efterhandel i ticker"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:68
+msgid "Use instrument names from provider"
+msgstr "Använd instrumentnamn från leverantören"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:72
+msgid "Change"
+msgstr "Förändring"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:73
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:85
+msgid "Pre Market*"
+msgstr "Före öppning*"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:74
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:86
+msgid "Post Market*"
+msgstr "Efter stängning*"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:75
+msgid "Volume"
+msgstr "Volym"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:76
+msgid "Exchange"
+msgstr "Börs"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:77
+msgid "Prev. Close"
+msgstr "Föreg. stängning"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:78
+msgid "Open"
+msgstr "Öppning"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:79
+msgid "Close"
+msgstr "Stängning"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:80
+msgid "High"
+msgstr "Högst"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:81
+msgid "Low"
+msgstr "Lägst"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:82
+msgid "Time"
+msgstr "Tid"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:83
+msgid "Before Hours*"
+msgstr "Före öppning*"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:84
+msgid "After Hours*"
+msgstr "Efter stängning*"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:87
+msgid "Realized"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:88
+msgid "Value"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:89
+msgid "Cost"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:90
+msgid "Price"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:92
+msgid "Buy"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:93
+msgid "Sell"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:98
+msgid "Auto"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:99
+msgid "5m"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:100
+msgid "15m"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:101
+msgid "1h"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:102
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:107
+msgid "1D"
+msgstr "1 dag"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:103
+msgid "1W"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:104
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:109
+msgid "1M"
+msgstr "1 mån"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:108
+msgid "5D"
+msgstr "5 dag"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:110
+msgid "6M"
+msgstr "6 mån"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:111
+msgid "YTD"
+msgstr "i år"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:112
+msgid "1Y"
+msgstr "1 år"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:113
+msgid "5Y"
+msgstr "5 år"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:114
+msgid "Max"
+msgstr "Max"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:118
+msgid "Save"
+msgstr "Spara"
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:119
+msgid "Date"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:120
+msgid "Alltime"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:121
+msgid "Total"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:122
+msgid "Today"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:123
+msgid "Amount"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:124
+msgid "OS"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:125
+msgid "Extension Version"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:126
+msgid "Git Commit"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:127
+#, fuzzy
+msgid "GNOME Version"
+msgstr "Version: "
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:128
+msgid "Session Type"
+msgstr ""
+
+#: stocks-and-coins-enhanced@sanguri82-design.github.io/helpers/translations.js:131
+msgid "%H:%M:%S %d.%m.%Y"
+msgstr "%Y-%m-%d %H:%M:%S"
+
+#, fuzzy
+#~ msgid "A extension to display stock quotes in GNOME Shell Panel"
+#~ msgstr ""
+#~ "<span>Stocks-Extension är ett tillägg för att visa och övervaka "
+#~ "aktiekurser i GNOME Shells systemrad</span>"
+
+#~ msgid "Create Stock Item"
+#~ msgstr "Skapa aktieobjekt"
+
+#~ msgid "Show in Ticker?"
+#~ msgstr "Visa i ticker?"
+
+#~ msgid "If disabled this stock will not be shown in the panel ticker"
+#~ msgstr ""
+#~ "Om inaktiverad kommer denna aktie inte att visas i systemradstickern"
+
+#~ msgid "Select provider to fetch stock data from"
+#~ msgstr "Välj leverantör att hämta aktiedata från"
+
+#~ msgid "yahoo"
+#~ msgstr "yahoo"
+
+#~ msgid "eastmoney"
+#~ msgstr "eastmoney"
+
+#~ msgid "Edit Stock Item"
+#~ msgstr "Redigera aktieobjekt"
+
+#~ msgid "Edit name"
+#~ msgstr "Redigera namn"
+
+#~ msgid "Edit Symbol"
+#~ msgstr "Redigera symbol"
+
+#~ msgid "Ticker Item Display Variation"
+#~ msgstr "Visningsalternativ för tickerobjekt"
+
+#~ msgid ""
+#~ "If enabled the ticker will automatically show pre / post market prices if "
+#~ "available marked by a * sign."
+#~ msgstr ""
+#~ "Om aktiverad kommer tickern automatiskt att visa kurser före öppning/"
+#~ "efter stängning om de är tillgängliga markerade med ett *-tecken."
+
+#~ msgid ""
+#~ "If enabled the names for instruments will be taken from provider data."
+#~ msgstr ""
+#~ "Om aktiverad kommer instrumentens namn att hämtas från leverantörsdatan."
+
+#~ msgid "Version: "
+#~ msgstr "Version: "
+
+#~ msgid "unknown (self-build ?)"
+#~ msgstr "okänd (privatbygge?)"
+
+#~ msgid ""
+#~ "<span>Stocks-Extension is an extension to display and observe Stock "
+#~ "quotes in GNOME Shell Panel</span>"
+#~ msgstr ""
+#~ "<span>Stocks-Extension är ett tillägg för att visa och övervaka "
+#~ "aktiekurser i GNOME Shells systemrad</span>"
+
+#~ msgid "Maintained by"
+#~ msgstr "Underhålls av"
+
+#~ msgid ""
+#~ "<span size=\"small\">This program comes with ABSOLUTELY NO WARRANTY. See "
+#~ "the <a href=\"https://www.gnu.org/licenses/gpl\">GNU General Public "
+#~ "License, version 3 or later</a> for details.</span>\n"
+#~ "                                        "
+#~ msgstr ""
+#~ "<span size=\"small\">Detta program kommer HELT UTAN GARANTI.\n"
+#~ "Se <a href=\"https://www.gnu.org/licenses/gpl\">GNU General Public "
+#~ "License, version 3 eller senare</a> för detaljer.</span>\n"
+#~ "                                        "
+
+#~ msgid "Clear entry"
+#~ msgstr "Rensa post"

@@ -1,61 +1,71 @@
-# [stocks-extension](https://extensions.gnome.org/extension/1422/stocks-extension/)
+# Stocks & Coins Enhanced
 
-A extension to display stock quotes in GNOME Shell Panel
+Stocks & Coins Enhanced displays stock and cryptocurrency quotes in the GNOME Shell panel. It supports portfolios, transactions, configurable ticker presentation, and candlestick charts.
 
-<p align="middle">
-    <img alt="projects" src="images/overview.png" width="700">
-</p>
+This project is an independently maintained fork of [Stocks Extension](https://github.com/internetstaff/stocks-extension). It uses its own name, UUID, settings schema, and release channel; it does not replace the original extension.
 
-<p align="middle">
-    <img alt="commits" src="images/crayons.png" width="350">
-    <img alt="commits" src="images/transactions.png" width="350">
-</p>
+## Features
 
-*stocks-extension* integrates stock quotes to your GNOME Shell Panel =)
+- Stock quotes from Yahoo Finance and Eastmoney
+- Cryptocurrency quotes from Binance, CoinGecko, Coinbase, and Upbit
+- Candlestick price charts
+- Custom portfolios and transaction tracking
+- Configurable font sizes, colors, ticker position, and refresh interval
 
-----
+Market data comes from third-party services and may be delayed or unavailable. This extension is for informational purposes only and is not financial advice.
 
 ## Installation
 
-This extension is available in the [GNOME Shell Extension Directory](https://extensions.gnome.org/extension/1422/stocks-extension/).
+### GNOME Extensions
 
-### Manual Installation
+After approval, the public GNOME Extensions page will be linked here.
 
-#### Release Package
-[Download](https://github.com/internetstaff/stocks-extension/releases) a release and put the content into `~/.local/share/gnome-shell/extensions/stocks@infinicode.de` (you need to create a directory).
+### Release package
 
-#### Make install
+Download a ZIP from the [releases page](https://github.com/sanguri82-design/Stock-and-Coins-Enhanced/releases), then install it with:
 
-Clone the repo and run `make install`
+```bash
+gnome-extensions install --force stocks-and-coins-enhanced-extension.zip
+```
 
-## Data Provider
+Log out and back in if GNOME Shell does not immediately recognize the extension.
 
-Data is cached for no less than 5 minutes and will reload automatically. Click refresh to force a fresh pull immediately.
+### Build from source
 
-Supported stock providers:
+```bash
+git clone https://github.com/sanguri82-design/Stock-and-Coins-Enhanced.git
+cd Stock-and-Coins-Enhanced
+make package
+```
 
- - [Yahoo Finance](https://finance.yahoo.com/)
- - [eastmoney](https://www.eastmoney.com/)
+The upload-ready archive is created at:
 
-Supported cryptocurrency providers (public market-data APIs, no API key or extra package required):
+```text
+_build/stocks-and-coins-enhanced-extension.zip
+```
 
- - [Binance](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/market-data-endpoints) — symbol example: `BTCUSDT`
- - [CoinGecko](https://docs.coingecko.com/reference/coins-markets) — coin ID example: `bitcoin`
- - [Coinbase](https://docs.cdp.coinbase.com/api-reference/exchange-api/rest-api/products/get-product-stats) — product example: `BTC-USD`
- - [Upbit](https://global-docs.upbit.com/reference/ticker-current-price) — market example: `KRW-BTC`
+## Adding stocks or coins
 
-Eastmoney is likely to be removed if I don't hear from users.
+1. Open the extension settings.
+2. Add or select a portfolio.
+3. Select the add button in the symbol list.
+4. Choose Stock or Coin and select a provider.
+5. Enter the provider-specific symbol or ID and a display name.
 
-## Add Stocks or Coins
+Examples include `BTCUSDT` for Binance, `bitcoin` for CoinGecko, `BTC-USD` for Coinbase, and `KRW-BTC` for Upbit.
 
-To add an item you need the provider-related symbol or identifier.
+## Development
 
-1. Open Settings
-2. Add or Select a Portfolio
-2. Click on the + icon on the bottom of the first tab
-3. Choose **Stock** or **Coin** and select a provider
-4. Enter the provider's symbol/ID and give it a name
+Run an isolated GNOME Shell development session with:
 
-
-### debug
+```bash
 dbus-run-session -- gnome-shell --devkit --wayland
+```
+
+## Origin and license
+
+The original project is **Stocks Extension**, hosted at <https://github.com/internetstaff/stocks-extension> and originally published at <https://extensions.gnome.org/extension/1422/stocks-extension/>.
+
+Original copyright notices, including the notice for Florijan Hamzic, are retained in the source. This fork was modified by sanguri82-design in 2026 to add cryptocurrency providers, candlestick charts, and visual changes.
+
+This project is distributed under the GNU General Public License version 3 or later. See [LICENSE](LICENSE) and [NOTICE](NOTICE).

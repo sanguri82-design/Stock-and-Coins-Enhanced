@@ -2,12 +2,13 @@
 
 # Copyright (C) 2020 Florijan Hamzic <fh[at]infinicode.de>
 # This file is distributed under the same license as the stocks-extension package.
+# Modified in 2026 by sanguri82-design for Stocks & Coins Enhanced.
 
-.PHONY: clean mrproper
+.PHONY: build package install clean mrproper
 
-EXTENSION_NAME := stocks
-UUID := $(EXTENSION_NAME)@infinicode.de
-AUTHOR_MAIL := fh@infinicode.de
+EXTENSION_NAME := stocks-and-coins-enhanced
+UUID := $(EXTENSION_NAME)@sanguri82-design.github.io
+BUG_REPORT_URL := https://github.com/sanguri82-design/Stock-and-Coins-Enhanced/issues
 
 BUILD_DIR := _build
 
@@ -30,7 +31,8 @@ MO_FILES := $(PO_FILES:$(PO_DIR)/%.po=$(LOCALE_DIR)/%/LC_MESSAGES/$(UUID).mo)
 MO_DIR := $(PO_FILES:$(PO_DIR)/%.po=$(LOCALE_DIR)/%/LC_MESSAGES)
 
 TOLOCALIZE := $(JS_FILES) $(SRC_DIR)/helpers/translations.js
-FILES :=  $(JS_FILES) $(JS_COMPONENTS) $(SCHEMAS_DIR) $(CSS_FILES) ${MEDIA_FILES} $(SRC_DIR)/metadata.json $(MO_FILES) README.md
+FILES := $(JS_FILES) $(JS_COMPONENTS) $(SCHEMAS_DIR) $(CSS_FILES) ${MEDIA_FILES} $(SRC_DIR)/metadata.json $(MO_FILES)
+LEGAL_FILES := LICENSE NOTICE README.md
 
 ifeq ($(strip $(DESTDIR)),)
 	INSTALLBASE := $(HOME)/.local
@@ -56,7 +58,7 @@ $(PO_DIR):
 	mkdir -p $@
 
 $(POT_FILE): $(PO_DIR)
-	xgettext --from-code=UTF-8 --package-name "gnome-shell-extension-$(EXTENSION_NAME)" --msgid-bugs-address=$(AUTHOR_MAIL) -k_ -kN_ -o $(POT_FILE) $(TOLOCALIZE)
+	xgettext --from-code=UTF-8 --package-name "gnome-shell-extension-$(EXTENSION_NAME)" --msgid-bugs-address=$(BUG_REPORT_URL) -k_ -kN_ -o $(POT_FILE) $(TOLOCALIZE)
 
 $(PO_FILES): $(POT_FILE) $(PO_DIR)
 	msgmerge -m -U --backup=none $@ $<
@@ -66,11 +68,12 @@ $(MO_FILES): $(PO_FILES) $(MO_DIR)
 $(LOCALE_DIR)/%/LC_MESSAGES/$(UUID).mo: $(PO_DIR)/%.po
 	msgfmt -c $< -o $@
 
-build: $(BUILD_DIR) $(MO_FILES)
+build: $(BUILD_DIR) $(COMPILED_SCHEMAS) $(MO_FILES)
 	cp -r --parents $(FILES) $<
+	cp $(LEGAL_FILES) $(BUILD_DIR)/$(SRC_DIR)/
 
 package: build
-	cd $(BUILD_DIR)/${SRC_DIR} && zip -r ../$(EXTENSION_NAME)-extension.zip *
+	cd $(BUILD_DIR)/${SRC_DIR} && zip -r -FS ../$(EXTENSION_NAME)-extension.zip *
 
 install: build
 	rm -rf $(INSTALL_DIR)

@@ -1,0 +1,25 @@
+Stocks & Coins Enhanced
+=======================
+
+This project is a modified version of Stocks Extension.
+
+Original project:
+  Stocks Extension
+  https://github.com/internetstaff/stocks-extension
+  https://extensions.gnome.org/extension/1422/stocks-extension/
+
+Original copyright notice retained in the source:
+  Copyright (C) 2020 Florijan Hamzic <fh@infinicode.de>
+
+Modified by:
+  sanguri82-design
+  Date: 2026-07-18
+
+Major modifications:
+  - Added cryptocurrency support through Binance, CoinGecko, Coinbase, and Upbit.
+  - Added candlestick chart representation.
+  - Changed font sizes, colors, and other user-interface presentation.
+  - Assigned a new extension name, UUID, settings schema, and release channel.
+
+The complete work is distributed under the GNU General Public License,
+version 3 or later. See the included LICENSE file.

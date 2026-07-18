@@ -1,0 +1,16 @@
+{
+  "description": "Displays stock and cryptocurrency quotes in the GNOME Shell panel with candlestick charts.\n\nA maintained fork of Stocks Extension by internetstaff and Florijan Hamzic. Market data is retrieved from third-party providers.",
+  "name": "Stocks & Coins Enhanced",
+  "settings-schema": "org.gnome.shell.extensions.stocksandcoinsenhanced",
+  "gettext-domain": "stocks-and-coins-enhanced@sanguri82-design.github.io",
+  "shell-version": [
+    "46",
+    "47",
+    "48",
+    "49",
+    "50"
+  ],
+  "url": "https://github.com/sanguri82-design/Stock-and-Coins-Enhanced",
+  "uuid": "stocks-and-coins-enhanced@sanguri82-design.github.io",
+  "version-name": "1.0"
+}

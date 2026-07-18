@@ -1,0 +1,220 @@
+/**** some globals ****/
+.stocks-coins-enhanced .small-text {
+    font-size: .8em;
+}
+
+.stocks-coins-enhanced .fwb {
+    font-weight: bold;
+}
+
+.stocks-coins-enhanced .tac {
+    text-align: center;
+}
+
+.stocks-coins-enhanced .tar {
+    text-align: right;
+}
+
+.stocks-coins-enhanced .quote-positive {
+    color: #ef4444;
+    font-weight: bolder;
+}
+
+.stocks-coins-enhanced .quote-negative {
+    color: #3b82f6;
+    font-weight: bolder;
+}
+
+.stocks-coins-enhanced .quote-neutral {
+    color: #000000;
+    font-weight: bolder;
+}
+
+.button-group .button {
+    margin: 0 5px;
+}
+
+.button-group .button.selected {
+    text-decoration: underline;
+    font-family: "Inter", sans-serif;
+    font-weight: 500;
+}
+
+/*** main components ***/
+
+.stocks-coins-enhanced .screen,
+.stocks-coins-enhanced .screen-wrapper {
+    width: 550px;
+    max-width: 550px;
+    height: 680px;
+    max-height: 680px;
+}
+
+/* make position consistent to panel icon */
+.stocks-coins-enhanced .menu-stock-ticker {
+    font-size: 1em;
+}
+
+.stocks-coins-enhanced .menu-stock-ticker .stock-info-box,
+.stocks-coins-enhanced .menu-stock-ticker .stock-quote-box {
+    font-size: 1em;
+    margin-left: 10px;
+}
+
+.stocks-coins-enhanced .menu-stock-ticker .stock-info-box:first-child,
+.stocks-coins-enhanced .menu-stock-ticker .stock-quote-box:first-child {
+    margin-left: 0;
+}
+
+.stocks-coins-enhanced .menu-stock-ticker .ticker-stock-quote-label {
+    text-align: left;
+    margin-right: 6px;
+}
+
+/* Follow the panel theme so neutral quotes stay visible in both light and dark panels. */
+.stocks-coins-enhanced .menu-stock-ticker .quote-neutral {
+    color: inherit;
+}
+
+.stocks-coins-enhanced .menu-stock-ticker .ticker-stock-name-label {
+    color: #4ade80;
+    font-weight: bold;
+}
+
+
+.stocks-coins-enhanced .menu-stock-ticker .stock-info-box.compact .ticker-stock-name-label,
+.stocks-coins-enhanced .menu-stock-ticker .stock-info-box.regular .ticker-stock-name-label {
+    margin-right: 10px;
+}
+
+
+.stocks-coins-enhanced .search-bar {
+    height: 40px;
+    padding: 5px 10px;
+}
+
+.stocks-coins-enhanced .search-bar .search-area-box StEntry {
+    width: 300px;
+}
+
+.stocks-coins-enhanced .search-bar .search-area-box .navigate-back-icon-button {
+    margin-right: 15px;
+}
+
+.stocks-coins-enhanced .search-bar .search-area-box .search-text-input .search-entry-icon {
+    width: 21px;
+    height: 21px;
+}
+
+.stocks-coins-enhanced .search-bar .button-box {
+    height: 20px;
+    margin-left: 15px;
+}
+
+.stocks-coins-enhanced .search-bar .button-box .icon-button {
+    margin: 0 5px;
+}
+
+.stocks-coins-enhanced .card {
+    margin: 10px 15px;
+    padding: 10px 20px;
+    box-shadow: none;
+}
+
+.stocks-coins-enhanced .card.stock-card .quote-information-price-box,
+.stocks-coins-enhanced .card.stock-card .stock-full-name {
+    min-height: 20px;
+}
+
+.stocks-coins-enhanced .card.news-card .news-details {
+    margin: 2px 0;
+    padding: 2px 0;
+    border-top: 1px dotted;
+    border-bottom: 1px dotted;
+}
+
+/*** stock details ***/
+.stocks-coins-enhanced .stock-details {
+    min-width: 480px;
+    margin: 0 15px 5px 15px;
+    padding: 5px 20px;
+}
+
+.stocks-coins-enhanced .stock-details-screen .button-group {
+    height: 65px;
+}
+
+.stocks-coins-enhanced .stock-details-screen .button-group-content {
+    padding: 5px 0;
+}
+
+.stocks-coins-enhanced .stock-details-screen .button-group .button {
+    height: 25px;
+    max-height: 25px;
+}
+
+.stocks-coins-enhanced .stock-details-screen .stock-details-tab-button-group {
+    height: 35px;
+}
+
+.stocks-coins-enhanced .stock-details-screen .chart-interval-button-group {
+    height: 45px;
+}
+
+.stocks-coins-enhanced .stock-details-screen .stock-details-tab-button-group .button-group-content {
+    padding: 0;
+}
+
+.stocks-coins-enhanced .stock-details-screen .stock-details-tab-button-group .button {
+    height: 15px;
+    max-height: 15px;
+}
+
+.stocks-coins-enhanced .stock-left-details-box {
+    margin-right: 10px;
+}
+
+.stocks-coins-enhanced .stock-right-details-box {
+    margin-left: 10px;
+}
+
+.stocks-coins-enhanced .detail-item-value, .detail-item-label {
+    font-size: .9em;
+}
+
+.stocks-coins-enhanced .chart {
+    margin: 5px;
+    border: 1px solid rgba(127, 127, 127, 0.18);
+    border-radius: 12px;
+    background-color: rgba(127, 127, 127, 0.07);
+}
+
+.stocks-coins-enhanced .chart-hover-box {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.stocks-coins-enhanced .chart-hover-label {
+    margin-right: 5px;
+    font-weight: bolder;
+}
+
+
+/*** edit screen ***/
+
+.stocks-coins-enhanced .edit-screen .form-element-box {
+    margin: 10px 15px;
+}
+
+.stocks-coins-enhanced .transaction-card .header-box {
+    margin-bottom: 4px;
+}
+
+.stocks-coins-enhanced .stock-card .stock-transactions-box {
+    margin-top: 5px;
+}
+
+.stocks-coins-enhanced .stock-card .detail-item-label,
+.stocks-coins-enhanced .stock-card .detail-item-value {
+    font-size: .8em;
+}
