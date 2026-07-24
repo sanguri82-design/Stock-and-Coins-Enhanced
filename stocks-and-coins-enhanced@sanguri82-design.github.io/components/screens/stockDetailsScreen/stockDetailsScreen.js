@@ -10,7 +10,7 @@ import { SearchBar } from '../../searchBar/searchBar.js'
 import { clearCache, formatCurrency, formatNumber, getStockColorStyleClass, toLocalDateFormat } from '../../../helpers/data.js'
 import { Translations } from '../../../helpers/translations.js'
 
-import { CHART_INTERVALS, CHART_INTERVALS_BY_RANGE, CHART_INTERVALS_MAX_GAP, CHART_RANGES, CHART_RANGES_MAX_GAP } from '../../../services/meta/generic.js'
+import { CHART_INTERVALS, CHART_INTERVALS_BY_RANGE, CHART_INTERVALS_MAX_GAP, CHART_RANGES, CHART_RANGES_MAX_GAP, FINANCE_PROVIDER } from '../../../services/meta/generic.js'
 import * as FinanceService from '../../../services/financeService.js'
 
 export const StockDetailsScreen = GObject.registerClass({
@@ -146,6 +146,7 @@ export const StockDetailsScreen = GObject.registerClass({
       x1: quoteHistorical.MarketStart,
       x2: quoteHistorical.MarketEnd,
       barData: quoteHistorical.VolumeData,
+      volumeUnit: this._getVolumeUnit(),
       additionalYData: this._isIntrayDayChart ? [this._quoteSummary.PreviousClose] : [],
       maxGapSize: this._selectedChartInterval === CHART_INTERVALS.AUTO
           ? CHART_RANGES_MAX_GAP[this._selectedChartRange]
@@ -209,5 +210,33 @@ export const StockDetailsScreen = GObject.registerClass({
         cairoContext
       })
     }
+  }
+
+  _getVolumeUnit () {
+    const provider = this._passedQuoteSummary.Provider
+    const symbol = String(this._passedQuoteSummary.Symbol || '').toUpperCase()
+    const currencyCode = String(this._quoteSummary.CurrencyCode || '').toUpperCase()
+
+    if (provider === FINANCE_PROVIDER.YAHOO || provider === FINANCE_PROVIDER.EAST_MONEY) {
+      return 'shares'
+    }
+
+    if (provider === FINANCE_PROVIDER.COINGECKO) {
+      return currencyCode || 'USD'
+    }
+
+    if (provider === FINANCE_PROVIDER.COINBASE) {
+      return symbol.split('-')[0] || 'units'
+    }
+
+    if (provider === FINANCE_PROVIDER.UPBIT) {
+      return symbol.split('-').at(-1) || 'units'
+    }
+
+    if (provider === FINANCE_PROVIDER.BINANCE && currencyCode && symbol.endsWith(currencyCode)) {
+      return symbol.slice(0, -currencyCode.length) || 'units'
+    }
+
+    return 'units'
   }
 })

@@ -128,7 +128,7 @@ export const initTranslations = (_) => {
       SESSION_TYPE: _('Session Type'),
     },
     FORMATS: {
-      DEFAULT_DATE_TIME: _('%H:%M:%S %d.%m.%Y')
+      DEFAULT_DATE_TIME: '%Y-%^b-%d %H:%M:%S'
     }
   }
 }

@@ -3,7 +3,7 @@ import GObject from 'gi://GObject'
 import St from 'gi://St'
 
 import { IconButton } from '../buttons/iconButton.js'
-import { formatCurrency, formatNumber, getStockColorStyleClass } from '../../helpers/data.js'
+import { formatCurrency, formatNumber, getStockColorStyleClass, toLocalDateFormat } from '../../helpers/data.js'
 import { Translations } from '../../helpers/translations.js'
 import { TRANSACTION_TYPES } from '../../services/meta/generic.js'
 
@@ -71,7 +71,7 @@ export const TransactionCard = GObject.registerClass({
 
     const quoteLabel = new St.Label({
       style_class: 'stock-full-name',
-      text: `${formatNumber(this.cardItem.amount, '--', 0)} @ ${formatCurrency(this.cardItem.price, this._currencyCode())} (${this.cardItem.type} | ${this.cardItem.date})`
+      text: `${formatNumber(this.cardItem.amount)} @ ${formatCurrency(this.cardItem.price, this._currencyCode())} (${this.cardItem.type} | ${toLocalDateFormat(this.cardItem.date, Translations.FORMATS.DEFAULT_DATE_TIME)})`
     })
 
     stockInformationBox.add_child(quoteLabel)

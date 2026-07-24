@@ -2,11 +2,24 @@ import GLib from 'gi://GLib'
 
 let CACHE = {}
 const CACHE_TIME = 10 * 1000
+const ENGLISH_MONTH_ABBREVIATIONS = [
+  'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN',
+  'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'
+]
+const ENGLISH_MONTH_FORMAT_TOKEN = '__ENGLISH_MONTH__'
 
 export const toLocalDateFormat = (date, format) => {
   const parsedDate = new Date(date)
   const glibDateTime = GLib.DateTime.new_from_iso8601(parsedDate.toISOString(), GLib.TimeZone.new_local()).to_local()
-  return glibDateTime ? glibDateTime.format(format) : date.toISOString()
+  if (!glibDateTime) {
+    return parsedDate.toISOString()
+  }
+
+  const glibFormat = format.replaceAll('%^b', ENGLISH_MONTH_FORMAT_TOKEN)
+  const formattedDate = glibDateTime.format(glibFormat)
+  const englishMonth = ENGLISH_MONTH_ABBREVIATIONS[glibDateTime.get_month() - 1]
+
+  return formattedDate.replaceAll(ENGLISH_MONTH_FORMAT_TOKEN, englishMonth)
 }
 
 export const isNullOrUndefined = value => typeof value === 'undefined' || value === null
@@ -119,21 +132,23 @@ export const moveDecimal = (value, decimalPlaces) => {
   return value / Math.pow(10, decimalPlaces)
 }
 
-export const roundOrDefault = (number, defaultValue = '--') => isNullOrUndefined(number) ? defaultValue : (Math.round((number + Number.EPSILON) * 100) / 100).toFixed(2)
-
-export const formatNumber = (number, defaultValue = '--', decimalPlaces = 2) => {
+export const formatNumber = (number, defaultValue = '--') => {
   if (isNullOrUndefined(number) || isNaN(number)) {
     return defaultValue
   }
 
+  const numericValue = Number(number)
+  const decimalPlaces = Number.isInteger(numericValue) ? 0 : 2
+
   return new Intl.NumberFormat('en-US', {
     minimumFractionDigits: decimalPlaces,
     maximumFractionDigits: decimalPlaces
-  }).format(Number(number))
+  }).format(numericValue)
 }
 
+export const roundOrDefault = (number, defaultValue = '--') => formatNumber(number, defaultValue)
+
 export const formatCurrency = (number, currencyCode, defaultValue = '--') => {
-  const decimalPlaces = currencyCode === 'KRW' ? 0 : 2
-  const formattedNumber = formatNumber(number, defaultValue, decimalPlaces)
+  const formattedNumber = formatNumber(number, defaultValue)
   return currencyCode ? `${formattedNumber} ${currencyCode}` : formattedNumber
 }

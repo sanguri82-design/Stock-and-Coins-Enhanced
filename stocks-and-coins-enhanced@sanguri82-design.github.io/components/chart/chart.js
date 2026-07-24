@@ -1,7 +1,9 @@
+import Cairo from 'cairo'
+import Clutter from 'gi://Clutter'
 import GObject from 'gi://GObject'
 import St from 'gi://St'
 
-import { closest, fallbackIfNaN, isNullOrEmpty, isNullOrUndefined } from '../../helpers/data.js'
+import { closest, fallbackIfNaN, formatNumber, isNullOrEmpty, isNullOrUndefined } from '../../helpers/data.js'
 
 const CHART_COLORS = {
   positive: '#ef4444ff',
@@ -15,6 +17,14 @@ const CHART_COLORS = {
 
 const PRICE_AREA_HEIGHT_RATIO = 0.76
 const PRICE_AREA_TOP_PADDING = 8
+const ZOOM_STEP = 1.25
+const MIN_VISIBLE_ITEMS = 5
+const TOOLTIP_FONT_SIZE = 12
+const TOOLTIP_LINE_HEIGHT = 17
+const TOOLTIP_PADDING_X = 10
+const TOOLTIP_PADDING_Y = 8
+const TOOLTIP_MARGIN = 8
+const TOOLTIP_CORNER_RADIUS = 7
 
 export const Chart = GObject.registerClass({
   GTypeName: 'StocksCoinsEnhanced_Chart',
@@ -24,7 +34,7 @@ export const Chart = GObject.registerClass({
     }
   }
 }, class Chart extends St.DrawingArea {
-  _init ({ data, candleData, x1, x2, barData, onDraw, additionalYData, maxGapSize }) {
+  _init ({ data, candleData, x1, x2, barData, onDraw, additionalYData, maxGapSize, volumeUnit }) {
     super._init({
       style_class: 'chart',
       reactive: true,
@@ -44,21 +54,30 @@ export const Chart = GObject.registerClass({
     this.candleData = cleanedCandleData
 
     this.x1 = x1
-    this.x2 = x2 - totalTimeShiftMillis
+    this.x2 = isNullOrUndefined(x2) ? null : x2 - totalTimeShiftMillis
+    const xValues = this.data?.map(item => item[0]) || []
+    this._fullX1 = this.x1 ?? Math.min(...xValues)
+    this._fullX2 = this.x2 ?? Math.max(...xValues)
+    this._viewX1 = this._fullX1
+    this._viewX2 = this._fullX2
+    this._minimumViewSpan = this._getMinimumViewSpan()
 
     this._selectedX = null
     this._selectedY = null
     this._selectedPoint = null
+    this._hoverTooltip = null
     this._surfaceWidth = 500
     this._surfaceHeight = 300
     this._onDraw = onDraw
     this._additionalYData = additionalYData || []
+    this._volumeUnit = volumeUnit || 'units'
     this._userLines = []
 
     this.connect('repaint', this._draw.bind(this))
     this.connect('button-press-event', this._onClick.bind(this))
     this.connect('motion-event', this._onHover.bind(this))
     this.connect('leave-event', this._onLeave.bind(this))
+    this.connect('scroll-event', this._onScroll.bind(this))
     this.connect('notify::mapped', () => {
       if (this.mapped) {
         this.queue_repaint()
@@ -114,6 +133,8 @@ export const Chart = GObject.registerClass({
       this._onDraw(baseParams)
     }
 
+    this._draw_hover_tooltip(baseParams)
+
     // dispose cairo stuff
     cairoContext.$dispose()
   }
@@ -143,17 +164,18 @@ export const Chart = GObject.registerClass({
   }
 
   _draw_candlesticks ({ width, height, cairoContext }) {
-    if (isNullOrEmpty(this.candleData)) {
+    const visibleCandleData = this._getVisibleData(this.candleData)
+    if (isNullOrEmpty(visibleCandleData)) {
       return
     }
 
-    const [minValueX, maxValueX] = this.getXRange(this.candleData)
-    const bodyWidth = Math.max(1, Math.min(8, (width / this.candleData.length) * 0.68))
+    const [minValueX, maxValueX] = this.getXRange()
+    const bodyWidth = Math.max(1, Math.min(18, (width / visibleCandleData.length) * 0.68))
     const positiveColor = this._getColor(CHART_COLORS.positive)
     const negativeColor = this._getColor(CHART_COLORS.negative)
     const neutralColor = this._getColor(CHART_COLORS.neutral)
 
-    this.candleData.forEach(([timestamp, rawOpen, rawHigh, rawLow, rawClose]) => {
+    visibleCandleData.forEach(([timestamp, rawOpen, rawHigh, rawLow, rawClose]) => {
       const open = Number(rawOpen)
       const high = Number(rawHigh)
       const low = Number(rawLow)
@@ -191,14 +213,15 @@ export const Chart = GObject.registerClass({
   }
 
   _draw_volume_bars ({ width, height, cairoContext }) {
-    if (isNullOrEmpty(this.barData)) {
+    const visibleBarData = this._getVisibleData(this.barData)
+    if (isNullOrEmpty(visibleBarData)) {
       return
     }
 
     const volumeBarsHeight = height * 0.16
-    const seriesData = this._transformSeriesData(this.barData, width, volumeBarsHeight)
+    const seriesData = this._transformSeriesData(visibleBarData, width, volumeBarsHeight)
 
-    const barWidth = Math.max(1, Math.min(5, (width / seriesData.length) * 0.65))
+    const barWidth = Math.max(1, Math.min(12, (width / seriesData.length) * 0.65))
     const positiveColor = this._getColor(CHART_COLORS.volumePositive)
     const negativeColor = this._getColor(CHART_COLORS.volumeNegative)
     const neutralColor = this._getColor(CHART_COLORS.volumeNeutral)
@@ -209,7 +232,7 @@ export const Chart = GObject.registerClass({
         return
       }
 
-      const timestamp = this.barData[index]?.[0]
+      const timestamp = visibleBarData[index]?.[0]
       const candle = candlesByTimestamp.get(timestamp)
       const open = Number(candle?.[1])
       const close = Number(candle?.[4])
@@ -259,6 +282,69 @@ export const Chart = GObject.registerClass({
     }
   }
 
+  _draw_hover_tooltip ({ width, height, cairoContext, secondaryColor }) {
+    if (!this._hoverTooltip) {
+      return
+    }
+
+    const { anchorX, anchorY, lines, placeAbove } = this._hoverTooltip
+
+    cairoContext.save()
+    cairoContext.selectFontFace('Sans', Cairo.FontSlant.NORMAL, Cairo.FontWeight.NORMAL)
+    cairoContext.setFontSize(TOOLTIP_FONT_SIZE)
+
+    const textWidth = Math.max(...lines.map(line => cairoContext.textExtents(line).width))
+    const bubbleWidth = Math.ceil(textWidth + (TOOLTIP_PADDING_X * 2))
+    const bubbleHeight = (lines.length * TOOLTIP_LINE_HEIGHT) + (TOOLTIP_PADDING_Y * 2)
+
+    let bubbleX = anchorX + TOOLTIP_MARGIN
+    if (bubbleX + bubbleWidth > width - TOOLTIP_MARGIN) {
+      bubbleX = anchorX - bubbleWidth - TOOLTIP_MARGIN
+    }
+    bubbleX = Math.max(TOOLTIP_MARGIN, Math.min(width - bubbleWidth - TOOLTIP_MARGIN, bubbleX))
+
+    let bubbleY = placeAbove
+        ? anchorY - bubbleHeight - TOOLTIP_MARGIN
+        : anchorY - (bubbleHeight / 2)
+    bubbleY = Math.max(TOOLTIP_MARGIN, Math.min(height - bubbleHeight - TOOLTIP_MARGIN, bubbleY))
+
+    this._roundedRectangle(
+        cairoContext,
+        bubbleX,
+        bubbleY,
+        bubbleWidth,
+        bubbleHeight,
+        TOOLTIP_CORNER_RADIUS
+    )
+    cairoContext.setSourceRGBA(0.08, 0.09, 0.12, 0.94)
+    cairoContext.fillPreserve()
+    cairoContext.setSourceRGBA(secondaryColor.red, secondaryColor.green, secondaryColor.blue, 0.9)
+    cairoContext.setLineWidth(1)
+    cairoContext.stroke()
+
+    cairoContext.setSourceRGBA(1, 1, 1, 1)
+    lines.forEach((line, index) => {
+      const baselineY = bubbleY + TOOLTIP_PADDING_Y + TOOLTIP_FONT_SIZE +
+          (index * TOOLTIP_LINE_HEIGHT)
+      cairoContext.moveTo(bubbleX + TOOLTIP_PADDING_X, baselineY)
+      cairoContext.showText(line)
+    })
+
+    cairoContext.restore()
+  }
+
+  _roundedRectangle (cairoContext, x, y, width, height, radius) {
+    const right = x + width
+    const bottom = y + height
+
+    cairoContext.newSubPath()
+    cairoContext.arc(right - radius, y + radius, radius, -Math.PI / 2, 0)
+    cairoContext.arc(right - radius, bottom - radius, radius, 0, Math.PI / 2)
+    cairoContext.arc(x + radius, bottom - radius, radius, Math.PI / 2, Math.PI)
+    cairoContext.arc(x + radius, y + radius, radius, Math.PI, Math.PI * 1.5)
+    cairoContext.closePath()
+  }
+
   _draw_user_lines ({ width, height, cairoContext, secondaryColor }) {
     this._userLines.forEach(userLine => {
       let { x1, x2, y1, y2 } = userLine
@@ -302,8 +388,8 @@ export const Chart = GObject.registerClass({
       return []
     }
 
-    const [minValueX, maxValueX] = this.getXRange(data)
-    const [minValueY, maxValueY] = this.getYRange(data)
+    const [minValueX, maxValueX] = this.getXRange()
+    const [minValueY, maxValueY] = this._createValueRange(data.map(item => item[1]))
 
     return data.map(([x, y]) => [
       this.encodeValue(x, minValueX, maxValueX, 0, width),
@@ -368,9 +454,13 @@ export const Chart = GObject.registerClass({
     const [minValueX, maxValueX] = this.getXRange()
 
     const hoveredValueX = this.decodeValue(chartX, minValueX, maxValueX, 0, this._surfaceWidth)
-    const originalValueX = closest(this.data.filter(data => data[1] !== null).map(data => data[0]), hoveredValueX)
+    const visibleData = this._getVisibleData(this.data).filter(data => data[1] !== null)
+    if (isNullOrEmpty(visibleData)) {
+      return
+    }
 
-    const tsItem = this.data.find(data => data[0] === originalValueX)
+    const originalValueX = closest(visibleData.map(data => data[0]), hoveredValueX)
+    const tsItem = visibleData.find(data => data[0] === originalValueX)
     this.emit('chart-hover', tsItem[2] || tsItem[0], tsItem[1])
 
     const selectedX = this.encodeValue(tsItem[0], minValueX, maxValueX, 0, this._surfaceWidth)
@@ -379,14 +469,157 @@ export const Chart = GObject.registerClass({
     this._selectedX = selectedX
     this._selectedY = selectedY
     this._selectedPoint = { x: selectedX, y: selectedY }
+    this._updateHoverTooltip(chartX, chartY)
 
     this.queue_repaint()
+  }
+
+  _updateHoverTooltip (chartX, chartY) {
+    this._hoverTooltip = null
+
+    const visibleBarData = this._getVisibleData(this.barData)
+    const volumeAreaHeight = this._surfaceHeight * 0.16
+    const volumeSeriesData = this._transformSeriesData(
+        visibleBarData,
+        this._surfaceWidth,
+        volumeAreaHeight
+    )
+
+    if (!isNullOrEmpty(volumeSeriesData)) {
+      const barWidth = Math.max(1, Math.min(12, (this._surfaceWidth / volumeSeriesData.length) * 0.65))
+      const closestBarIndex = this._getClosestPointIndex(volumeSeriesData, chartX)
+      const [barX, barHeight] = volumeSeriesData[closestBarIndex]
+      const barTop = this._surfaceHeight - barHeight
+      const hitWidth = Math.max(5, barWidth / 2)
+
+      if (Math.abs(chartX - barX) <= hitWidth &&
+          chartY >= barTop &&
+          chartY <= this._surfaceHeight) {
+        this._hoverTooltip = {
+          anchorX: barX,
+          anchorY: barTop,
+          lines: [`${formatNumber(visibleBarData[closestBarIndex][1])} ${this._volumeUnit}`],
+          placeAbove: true
+        }
+        return
+      }
+    }
+
+    const visibleCandleData = this._getVisibleData(this.candleData)
+    if (isNullOrEmpty(visibleCandleData)) {
+      return
+    }
+
+    const [minValueX, maxValueX] = this.getXRange()
+    const candleWidth = Math.max(1, Math.min(18, (this._surfaceWidth / visibleCandleData.length) * 0.68))
+    const candlePoints = visibleCandleData.map(candle => [
+      this.encodeValue(candle[0], minValueX, maxValueX, 0, this._surfaceWidth),
+      candle
+    ])
+    const closestCandleIndex = this._getClosestPointIndex(candlePoints, chartX)
+    const [candleX, candle] = candlePoints[closestCandleIndex]
+    const [, open, high, low, close] = candle.map(Number)
+    const highY = this.getPriceY(high, this._surfaceHeight)
+    const lowY = this.getPriceY(low, this._surfaceHeight)
+    const hitWidth = Math.max(5, candleWidth / 2)
+
+    if ([open, high, low, close].some(value => isNaN(value)) ||
+        Math.abs(chartX - candleX) > hitWidth ||
+        chartY < highY - 4 ||
+        chartY > lowY + 4) {
+      return
+    }
+
+    this._hoverTooltip = {
+      anchorX: candleX,
+      anchorY: highY,
+      lines: [
+        `High: ${formatNumber(high)}`,
+        `Low: ${formatNumber(low)}`,
+        `Open: ${formatNumber(open)}`,
+        `Close: ${formatNumber(close)}`
+      ],
+      placeAbove: false
+    }
+  }
+
+  _getClosestPointIndex (points, targetX) {
+    let closestIndex = 0
+    let closestDistance = Infinity
+
+    points.forEach((point, index) => {
+      const distance = Math.abs(point[0] - targetX)
+      if (distance < closestDistance) {
+        closestIndex = index
+        closestDistance = distance
+      }
+    })
+
+    return closestIndex
+  }
+
+  _onScroll (item, event) {
+    if (isNullOrEmpty(this.data) || this._surfaceWidth <= 0) {
+      return Clutter.EVENT_PROPAGATE
+    }
+
+    const direction = event.get_scroll_direction()
+    let zoomAmount
+
+    if (direction === Clutter.ScrollDirection.UP) {
+      zoomAmount = -1
+    } else if (direction === Clutter.ScrollDirection.DOWN) {
+      zoomAmount = 1
+    } else if (direction === Clutter.ScrollDirection.SMOOTH) {
+      const [, deltaY] = event.get_scroll_delta()
+      if (deltaY === 0) {
+        return Clutter.EVENT_PROPAGATE
+      }
+      zoomAmount = deltaY
+    } else {
+      return Clutter.EVENT_PROPAGATE
+    }
+
+    const [coordX] = event.get_coords()
+    const [positionX] = item.get_transformed_position()
+    const pointerRatio = Math.max(0, Math.min(1, (coordX - positionX) / this._surfaceWidth))
+    const currentSpan = this._viewX2 - this._viewX1
+    const fullSpan = this._fullX2 - this._fullX1
+    const nextSpan = Math.max(
+        this._minimumViewSpan,
+        Math.min(fullSpan, currentSpan * Math.pow(ZOOM_STEP, zoomAmount))
+    )
+
+    if (Math.abs(nextSpan - currentSpan) < 1) {
+      return Clutter.EVENT_STOP
+    }
+
+    const anchorX = this._viewX1 + (currentSpan * pointerRatio)
+    let nextX1 = anchorX - (nextSpan * pointerRatio)
+    let nextX2 = nextX1 + nextSpan
+
+    if (nextX1 < this._fullX1) {
+      nextX1 = this._fullX1
+      nextX2 = nextX1 + nextSpan
+    }
+    if (nextX2 > this._fullX2) {
+      nextX2 = this._fullX2
+      nextX1 = nextX2 - nextSpan
+    }
+
+    this._viewX1 = nextX1
+    this._viewX2 = nextX2
+    this._onHover(item, event)
+    this.queue_repaint()
+
+    return Clutter.EVENT_STOP
   }
 
   _onLeave () {
     this._selectedX = null
     this._selectedY = null
     this._selectedPoint = null
+    this._hoverTooltip = null
 
     this.emit('chart-hover', null, null)
 
@@ -400,19 +633,17 @@ export const Chart = GObject.registerClass({
       return
     }
 
-    const minValueX = this.x1 || data[0][0]
-    const maxValueX = this.x2 || data[data.length - 1][0]
-
-    return [minValueX, maxValueX]
+    return [this._viewX1, this._viewX2]
   }
 
   getYRange (data) {
     if (!data && !isNullOrEmpty(this.candleData)) {
-      const candleValues = this.candleData.flatMap(item => [item[2], item[3]])
+      const visibleCandleData = this._getVisibleData(this.candleData)
+      const candleValues = visibleCandleData.flatMap(item => [item[2], item[3]])
       return this._createValueRange([...this._additionalYData, ...candleValues])
     }
 
-    data = data || this.data
+    data = this._getVisibleData(data || this.data)
     if (!data) {
       return
     }
@@ -446,6 +677,36 @@ export const Chart = GObject.registerClass({
     maxValueY += buffer
 
     return [minValueY, maxValueY]
+  }
+
+  _getVisibleData (data) {
+    if (isNullOrEmpty(data)) {
+      return []
+    }
+
+    return data.filter(item => item[0] >= this._viewX1 && item[0] <= this._viewX2)
+  }
+
+  _getMinimumViewSpan () {
+    const data = !isNullOrEmpty(this.candleData) ? this.candleData : this.data
+    const fullSpan = this._fullX2 - this._fullX1
+
+    if (isNullOrEmpty(data) || data.length < 2 || fullSpan <= 0) {
+      return fullSpan
+    }
+
+    const intervals = data
+        .slice(1)
+        .map((item, index) => item[0] - data[index][0])
+        .filter(interval => interval > 0)
+        .sort((a, b) => a - b)
+
+    if (isNullOrEmpty(intervals)) {
+      return fullSpan
+    }
+
+    const medianInterval = intervals[Math.floor(intervals.length / 2)]
+    return Math.min(fullSpan, medianInterval * (MIN_VISIBLE_ITEMS - 1))
   }
 
   removeTimeGaps (data, maxGapInMillis) {

@@ -222,7 +222,7 @@ export const StockDetails = GObject.registerClass({
 
     rightDetailBox.add_child(this._createDetailItem(
         this._createDetailItemLabel(Translations.STOCKS.VOLUME),
-        this._createDetailItemValue(formatNumber(quoteSummary.Volume, '--', 0))
+        this._createDetailItemValue(formatNumber(quoteSummary.Volume))
     ))
 
     return rightDetailBox
